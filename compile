@@ -35,9 +35,9 @@ done
 # using one case statement per executable binary
 case $link in
     all|image) gcc $FLAGS $LFLAGS -o image image.o \
-	          bitpack.o compress.o \
+	          bitpack.o compress.o codeword.o \
 	          dct.o color_space.o \
-	          img_c.o img_d.o \
+	          ppm_c.o ppm_d.o \
 	          a2plain.o uarray2.o \
                   $LIBS
               linked=yes ;;
@@ -45,7 +45,7 @@ esac
 
 case $link in
     ppmdiff) gcc $FLAGS $LFLAGS -o ppmdiff ppmdiff.o \
-	          img_d.o \
+	          ppm_d.o \
 	          a2plain.o uarray2.o \
                   $LIBS
               linked=yes ;;
@@ -54,7 +54,7 @@ esac
 case $link in
     ppmtest) gcc $FLAGS $LFLAGS -o ppmtest ppmtest.o  \
 	          dct.o color_space.o \
-	          img_c.o img_d.o \
+	          ppm_c.o ppm_d.o \
 	          a2plain.o uarray2.o \
                   $LIBS
               linked=yes ;;
