@@ -44,15 +44,14 @@ case $link in
 esac
 
 case $link in
-    ppmdiff) gcc $FLAGS $LFLAGS -o ppmdiff ppmdiff.o \
-	          ppm_d.o \
+    all|ppmdiff) gcc $FLAGS $LFLAGS -o ppmdiff ppmdiff.o \
 	          a2plain.o uarray2.o \
                   $LIBS
               linked=yes ;;
 esac
 
 case $link in
-    ppmtest) gcc $FLAGS $LFLAGS -o ppmtest ppmtest.o  \
+    all|ppmtest) gcc $FLAGS $LFLAGS -o ppmtest ppmtest.o  \
 	          dct.o color_space.o \
 	          ppm_c.o ppm_d.o \
 	          a2plain.o uarray2.o \
