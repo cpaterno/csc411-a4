@@ -8,12 +8,12 @@
 
 // double version of Pnm_rgb used for float representation of the image's pixels
 // exported as pointer to follow pnm interface's format
-typdef struct Pnm_rgb_f {
-    double r, g, b;
+typedef struct Pnm_rgb_f {
+    double red, green, blue;
 } *Pnm_rgb_f; 
 
 // count the number of 2 by 2 blocks in an even dimensioned image
-extern unsigned num_blocks(Pnm_ppm ppm);
+extern unsigned num_blocks(const Pnm_ppm ppm);
 
 // return a new ppm which has even dimensions
 Pnm_ppm trim(const Pnm_ppm ppm);

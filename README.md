@@ -4,7 +4,7 @@ By Jack Edgar and Chris Paterno
 
 ## Modules
 - [ ] Bitpack
-  - [ ] Raise Except_T Bitpack_Overflow when appropriate
+  - [ ] Raise `Except_T Bitpack_Overflow` when appropriate
   - [ ] `bool Bitpack_fitsu(uint64_t n, unsigned width)`
   - [ ] `bool Bitpack_fitss( int64_t n, unsigned width)`
   - [ ] `uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb)`
@@ -58,22 +58,22 @@ By Jack Edgar and Chris Paterno
   - [ ] `double coef_c(double y1, double y2, double y3, double y4)` // c
   - [ ] `double coef_d(double y1, double y2, double y3, double y4)` // d
 
-- [ ] Decompressed PPM
-  - [ ] Pnm_rgb_f struct
-    - [ ] double r
-    - [ ] double g
-    - [ ] double b
-   - [ ] `unsigned num_blocks(Pnm_ppm ppm)`
-   - [ ] `Pnm_ppm trim(const Pnm_ppm ppm)`
-   - [ ] `Pnm_ppm floatrep(const Pnm_ppm ppm)`
-   - [ ] `Pnm_ppm intrep(const Pnm_ppm ppm)`
+- [x] Decompressed PPM
+  - [x] `Pnm_rgb_f` struct
+    - [x] double red
+    - [x] double green
+    - [x] double blue
+   - [x] `unsigned num_blocks(Pnm_ppm ppm)`
+   - [x] `Pnm_ppm trim(const Pnm_ppm ppm)`
+   - [x] `Pnm_ppm floatrep(const Pnm_ppm ppm)`
+   - [x] `Pnm_ppm intrep(const Pnm_ppm ppm)`
 
 - [ ] Compressed PPM
-  - [ ] Pnm_comp struct
+  - [ ] `Pnm_comp` struct
     - [ ] unsigned width
     - [ ] unsigned height
-    - [ ] unsigned num_words
-    - [ ] Array_T words
+    - [ ] `unsigned num_words`
+    - [ ] `Array_T words`
    - [ ] `void Ppm_comp_read(FILE *fp)`
    - [ ] `void Ppm_comp_write(FILE *fp)`
    - [ ] `void Ppm_comp_free(Ppm_comp *ppmp)`
