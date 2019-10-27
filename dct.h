@@ -1,6 +1,11 @@
 #ifndef __DCT__
 #define __DCT__
 
+// This module exports 8 functions which represents the discrete cosine transform
+// The first four functions undo a discrete cosine transform on 
+// the four coefficients 
+// The last four functions do a discrete cosine transform on the 4 brightnesses
+
 // Return y1 value
 extern double luma_tl(double a, double b, double c, double d);
 
