@@ -3,6 +3,7 @@
 
 // Return y1 value
 extern double luma_tl(double a, double b, double c, double d);
+
 // Return y2 value
 extern double luma_tr(double a, double b, double c, double d);
 

@@ -1,18 +1,22 @@
 #ifndef __COLOR_SPACE__
 #define __COLOR_SPACE__
 
+// return y
+extern double luma(double r, double g, double b);
 
-extern double luma(double r, double g, double b); // y
+// return pb
+extern double diff_blue(double r, double g, double b);
 
-extern double diff_blue(double r, double g, double b); // pb
+// return pr
+extern double diff_red(double r, double g, double b);
 
-extern double diff_red(double r, double g, double b); // pr
+// return red
+extern double red(double y, double pb, double pr);
 
-extern double red(double y, double pb, double pr); // red
+// return green
+extern double green(double y, double pb, double pr);
 
-extern double green(double y, double pb, double pr); // green
-
-extern double blue(double y, double pb, double pr); // blue
-
+// return blue
+extern double blue(double y, double pb, double pr);
 
 #endif
