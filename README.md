@@ -88,9 +88,9 @@ By Jack Edgar and Chris Paterno
   - [x] Convert to floating point numbers
   - [x] Convert back to integers
   - [x] Write out image
-  - [ ] Advanced steps (done before write out)
-    - [ ] Convert from RGB to YPBPR
-    - [ ] Convert from YPBPR to RGB
+  - [x] Advanced steps (done before write out)
+    - [x] Convert from RGB to YPBPR
+    - [x] Convert from YPBPR to RGB
 
 - [x] PPM Diff
   - [x] Read in 1-2 arguments (representing ppms, missing arg is stdin)

@@ -8,6 +8,7 @@
 
 // double version of Pnm_rgb used for float representation of the image's pixels
 // exported as pointer to follow pnm interface's format
+// if used for cv space, y = red, pb = green, pr = blue
 typedef struct Pnm_rgb_f {
     double red, green, blue;
 } *Pnm_rgb_f; 
