@@ -40,23 +40,23 @@ By Jack Edgar and Chris Paterno
   - [ ] `unsigned code_a(double a)`
   - [ ] `int code_bcd(double d)`
 
-- [ ] Color Space
-  - [ ] `double luma(double r, double g, double b)` // y 
-  - [ ] `double diff_blue(double r, double g, double b)` // pb
-  - [ ] `double diff_red(double r, double g, double b)` // pr
-  - [ ] `double red(double y, double pb, double pr)` // red
-  - [ ] `double green(double y, double pb, double pr)` // green
-  - [ ] `double blue(double y, double pb, double pr)` // blue
+- [x] Color Space
+  - [x] `double luma(double r, double g, double b)` // y 
+  - [x] `double diff_blue(double r, double g, double b)` // pb
+  - [x] `double diff_red(double r, double g, double b)` // pr
+  - [x] `double red(double y, double pb, double pr)` // red
+  - [x] `double green(double y, double pb, double pr)` // green
+  - [x] `double blue(double y, double pb, double pr)` // blue
 
-- [ ] Discrete Cosine Transform
-  - [ ] `double luma_tl(double a, double b, double c, double d)` // y1
-  - [ ] `double luma_tr(double a, double b, double c, double d)` // y2
-  - [ ] `double luma_bl(double a, double b, double c, double d)` // y3
-  - [ ] `double luma_br(double a, double b, double c, double d)` // y4
-  - [ ] `double coef_a(double y1, double y2, double y3, double y4)` // a
-  - [ ] `double coef_b(double y1, double y2, double y3, double y4)` // b
-  - [ ] `double coef_c(double y1, double y2, double y3, double y4)` // c
-  - [ ] `double coef_d(double y1, double y2, double y3, double y4)` // d
+- [x] Discrete Cosine Transform
+  - [x] `double luma_tl(double a, double b, double c, double d)` // y1
+  - [x] `double luma_tr(double a, double b, double c, double d)` // y2
+  - [x] `double luma_bl(double a, double b, double c, double d)` // y3
+  - [x] `double luma_br(double a, double b, double c, double d)` // y4
+  - [x] `double coef_a(double y1, double y2, double y3, double y4)` // a
+  - [x] `double coef_b(double y1, double y2, double y3, double y4)` // b
+  - [x] `double coef_c(double y1, double y2, double y3, double y4)` // c
+  - [x] `double coef_d(double y1, double y2, double y3, double y4)` // d
 
 - [x] Decompressed PPM
   - [x] `Pnm_rgb_f` struct

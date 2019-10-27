@@ -5,7 +5,7 @@ set -e    # halt on first error
 link=all  # link all binaries by default
 linked=no # track whether we linked
 
-case $1 in  
+case $1 in
   -nolink) link=none ; shift ;;  # don't link
   -link)   link="$2" ; shift ; shift ;;  # link only one binary
 esac
@@ -25,7 +25,7 @@ case $# in
 esac
 
 # compile each argument to a .o file
-for cfile 
+for cfile
 do
   gcc $FLAGS $CFLAGS -c $cfile
 done
@@ -53,7 +53,7 @@ esac
 case $link in
     all|ppmtest) gcc $FLAGS $LFLAGS -o ppmtest ppmtest.o  \
 	          dct.o color_space.o \
-	          ppm_c.o ppm_d.o \
+	          ppm_d.o \
 	          a2plain.o uarray2.o \
                   $LIBS
               linked=yes ;;
@@ -61,7 +61,7 @@ esac
 
 # error if asked to link something we didn't recognize
 if [ $linked = no ]; then
-  case $link in  # if the -link option makes no sense, complain 
+  case $link in  # if the -link option makes no sense, complain
     none) ;; # OK, do nothing
     *) echo "`basename $0`: don't know how to link $link" 1>&2 ; exit 1 ;;
   esac
