@@ -90,7 +90,7 @@ Pnm_ppm Pnm_rgbrep(const Pnm_ppm ppm) {
             r = red(old_pixel->red, old_pixel->green, old_pixel->blue);
             g = green(old_pixel->red, old_pixel->green, old_pixel->blue);
             b = blue(old_pixel->red, old_pixel->green, old_pixel->blue);
-	    new_pixel = (Pnm_rgb_f)temp->methods->at(ppm->pixels, j, i);
+	    new_pixel = (Pnm_rgb_f)temp->methods->at(temp->pixels, j, i);
 	    new_pixel->red = r;
 	    new_pixel->green = g;
 	    new_pixel->blue = b;
