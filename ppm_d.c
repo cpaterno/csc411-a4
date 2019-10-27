@@ -4,7 +4,7 @@
 #include "ppm_d.h"
 
 // count the number of 2 by 2 blocks in an even dimensioned image
-unsigned num_blocks(const Pnm_ppm ppm) {
+unsigned Pnm_num_blocks(const Pnm_ppm ppm) {
     assert(ppm);
     assert(ppm->width % 2 == 0
            && ppm->height % 2 == 0);
@@ -12,14 +12,14 @@ unsigned num_blocks(const Pnm_ppm ppm) {
 }
 
 // return a new ppm which has even dimensions
-Pnm_ppm trim(const Pnm_ppm ppm) {
+Pnm_ppm Pnm_trim(const Pnm_ppm ppm) {
     assert(ppm);
     // initialize out with ppm's defaults 
     Pnm_ppm out;
     NEW(out);
     out->width = ppm->width;
     out->height = ppm->height;
-    out->denominator = out->denominator;
+    out->denominator = ppm->denominator;
     out->methods = ppm->methods;
     if (ppm->width % 2 != 0) {
     	out->width -= 1;
@@ -50,16 +50,16 @@ static double color_to_float(unsigned color, unsigned denom) {
 }
 
 // return a new ppm which has pixels with floating point representation
-Pnm_ppm floatrep(const Pnm_ppm ppm) {
+Pnm_ppm Pnm_floatrep(const Pnm_ppm ppm) {
     assert(ppm);
     // initialize out with ppm's defaults 
     Pnm_ppm out;
     NEW(out);
     out->width = ppm->width;
     out->height = ppm->height;
-    out->denominator = out->denominator;
+    out->denominator = ppm->denominator;
     out->methods = ppm->methods;
-    out->pixels = out->methods->new(out->width, out->height, sizeof(Pnm_rgb_f));
+    out->pixels = out->methods->new(out->width, out->height, sizeof(struct Pnm_rgb_f));
     // go through each pixel in ppm convert its rgb values to float
     // and then copy it over to out 
     Pnm_rgb old_pixel = NULL;
@@ -86,15 +86,16 @@ static unsigned color_to_int(double color, unsigned denom) {
 }
 
 // return a new ppm which has pixels with int representation
-Pnm_ppm intrep(const Pnm_ppm ppm) {
+Pnm_ppm Pnm_intrep(const Pnm_ppm ppm) {
     assert(ppm);
     // initialize out with ppm's defaults 
     Pnm_ppm out;
     NEW(out);
     out->width = ppm->width;
     out->height = ppm->height;
-    out->denominator = out->denominator;
+    out->denominator = ppm->denominator;
     out->methods = ppm->methods;
+    out->pixels = out->methods->new(out->width, out->height, sizeof(struct Pnm_rgb));
     // go through each pixel in ppm convert its rgb values to unsigned
     // and then copy it over to out 
     Pnm_rgb_f old_pixel = NULL;

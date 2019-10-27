@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
             images[i - 1] = stdin;
         } else {
             images[i - 1] = fopen(argv[i], "rb");
+	    assert(images[i - 1]);
         }
     }
     assert((images[0] != stdin && images[1] != stdin)

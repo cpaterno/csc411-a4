@@ -13,15 +13,15 @@ typedef struct Pnm_rgb_f {
 } *Pnm_rgb_f; 
 
 // count the number of 2 by 2 blocks in an even dimensioned image
-extern unsigned num_blocks(const Pnm_ppm ppm);
+extern unsigned Pnm_num_blocks(const Pnm_ppm ppm);
 
 // return a new ppm which has even dimensions
-Pnm_ppm trim(const Pnm_ppm ppm);
+Pnm_ppm Pnm_trim(const Pnm_ppm ppm);
 
 // return a new ppm which has pixels with floating point representation
-Pnm_ppm floatrep(const Pnm_ppm ppm);
+Pnm_ppm Pnm_floatrep(const Pnm_ppm ppm);
 
 // return a new ppm which has pixels with int representation
-Pnm_ppm intrep(const Pnm_ppm ppm);
+Pnm_ppm Pnm_intrep(const Pnm_ppm ppm);
 
 #endif
