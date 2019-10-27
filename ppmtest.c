@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
    A2Methods_T methods = array2_methods_plain;
    assert(methods);
    Pnm_ppm image = Pnm_ppmread(instream, methods);
+   // done with file so close it
    if (instream != stdin) {
        fclose(instream);
    }

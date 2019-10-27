@@ -21,7 +21,7 @@ By Jack Edgar and Chris Paterno
     - [ ] For every 2 by 2 block of an image, pack it into a 32b word
       - [ ] Average a block’s Pb and Pr
       - [ ] Convert average Pb and average Pr into their respective 4b code words
-      - [ ] Use a discrete cosine transform to convert the four brightnesses (Ys) to a, b, c, d
+      - [ ] Use a discrete cosine transform to convert the brightnesses (Ys) to a, b, c, d
       - [ ] Convert a to a 9b unsigned. Convert b, c, d into 5b signed scaled integers
       - [ ] Pack results of steps 5.2 and 5.4 into code word
     - [ ] Pack results a, b, c, d into codeword
@@ -82,12 +82,12 @@ By Jack Edgar and Chris Paterno
 - [ ] Image
   - [ ] Implement compress (image hands off to this module)
 
-- [ ] PPM Test
-  - [ ] Read decompressed ppm
-  - [ ] Trim image
-  - [ ] Convert to floating point numbers
-  - [ ] Convert back to integers
-  - [ ] Write out image
+- [x] PPM Test
+  - [x] Read decompressed ppm
+  - [x] Trim image
+  - [x] Convert to floating point numbers
+  - [x] Convert back to integers
+  - [x] Write out image
   - [ ] Advanced steps (done before write out)
     - [ ] Convert from RGB to YPBPR
     - [ ] Convert from YPBPR to RGB
