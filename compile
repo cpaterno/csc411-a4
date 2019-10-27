@@ -52,8 +52,7 @@ esac
 
 case $link in
     all|ppmtest) gcc $FLAGS $LFLAGS -o ppmtest ppmtest.o  \
-	          dct.o color_space.o \
-	          ppm_d.o \
+	          ppm_d.o color_space.o \
 	          a2plain.o uarray2.o \
                   $LIBS
               linked=yes ;;

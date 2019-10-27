@@ -35,9 +35,9 @@ Pnm_ppm Pnm_trim(const Pnm_ppm ppm) {
     void *new_pixel = NULL;
     for (unsigned i = 0; i < out->height; ++i) {
     	for (unsigned j = 0; j < out->width; ++j) {
-	     old_pixel = ppm->methods->at(ppm->pixels, j, i);
-	     new_pixel = out->methods->at(out->pixels, j, i);
-	     memcpy(new_pixel, old_pixel, size);
+	    old_pixel = ppm->methods->at(ppm->pixels, j, i);
+	    new_pixel = out->methods->at(out->pixels, j, i);
+	    memcpy(new_pixel, old_pixel, size);
 	}
     }
     return out;
@@ -66,14 +66,14 @@ Pnm_ppm Pnm_floatrep(const Pnm_ppm ppm) {
     Pnm_rgb_f new_pixel = NULL;
     for (unsigned i = 0; i < out->height; ++i) {
     	for (unsigned j = 0; j < out->width; ++j) {
-	     old_pixel = (Pnm_rgb)ppm->methods->at(ppm->pixels, j, i);
-	     new_pixel = (Pnm_rgb_f)out->methods->at(out->pixels, j, i);
-	     struct Pnm_rgb_f temp = {
-	         color_to_float(old_pixel->red, out->denominator),
-	         color_to_float(old_pixel->green, out->denominator),
-	         color_to_float(old_pixel->blue, out->denominator)
-	     };
-	     *new_pixel = temp;
+	    old_pixel = (Pnm_rgb)ppm->methods->at(ppm->pixels, j, i);
+	    new_pixel = (Pnm_rgb_f)out->methods->at(out->pixels, j, i);
+	    struct Pnm_rgb_f temp = {
+	        color_to_float(old_pixel->red, out->denominator),
+	        color_to_float(old_pixel->green, out->denominator),
+	        color_to_float(old_pixel->blue, out->denominator)
+	    };
+	    *new_pixel = temp;
 	}
     }
     return out;
@@ -101,14 +101,14 @@ Pnm_ppm Pnm_intrep(const Pnm_ppm ppm) {
     Pnm_rgb new_pixel = NULL;
     for (unsigned i = 0; i < out->height; ++i) {
     	for (unsigned j = 0; j < out->width; ++j) {
-	     old_pixel = (Pnm_rgb_f)ppm->methods->at(ppm->pixels, j, i);
-	     new_pixel = (Pnm_rgb)out->methods->at(out->pixels, j, i);
-	     struct Pnm_rgb temp = {
-	         color_to_int(old_pixel->red, out->denominator),
-	         color_to_int(old_pixel->green, out->denominator),
-	         color_to_int(old_pixel->blue, out->denominator)
-	     };
-	     *new_pixel = temp;
+	    old_pixel = (Pnm_rgb_f)ppm->methods->at(ppm->pixels, j, i);
+	    new_pixel = (Pnm_rgb)out->methods->at(out->pixels, j, i);
+	    struct Pnm_rgb temp = {
+	        color_to_int(old_pixel->red, out->denominator),
+	        color_to_int(old_pixel->green, out->denominator),
+	        color_to_int(old_pixel->blue, out->denominator)
+	    };
+	    *new_pixel = temp;
 	}
     }
     return out;
