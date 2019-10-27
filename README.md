@@ -92,11 +92,11 @@ By Jack Edgar and Chris Paterno
     - [ ] Convert from RGB to YPBPR
     - [ ] Convert from YPBPR to RGB
 
-- [ ] PPM Diff
-  - [ ] Read in 1-2 arguments (representing ppms, missing arg is stdin)
-  - [ ] Read in first ppm to I, and second ppm to I'
-  - [ ] Check if width and height diffs are at most 1
-    - [ ] If not, print error message to stderr and print 1.0 to stdout, cleanup and abort
-  - [ ] For every pixel, using the smaller image's dimensions
-    - [ ] Compute root mean square difference (E)
-  - [ ] Print E to stdout with four digits of precision
+- [x] PPM Diff
+  - [x] Read in 1-2 arguments (representing ppms, missing arg is stdin)
+  - [x] Read in first ppm to I, and second ppm to I'
+  - [x] Check if width and height diffs are at most 1
+    - [x] If not, print error message to stderr and print 1.0 to stdout, cleanup and abort
+  - [x] For every pixel, using the smaller image's dimensions
+    - [x] Compute root mean square difference (E)
+  - [x] Print E to stdout with four digits of precision

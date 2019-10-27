@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
   }
   assert(argc - i <= 1); // at most one file on command line
   if (i < argc) {
-    FILE* fp = fopen(argv[i], "r");
+    FILE *fp = fopen(argv[i], "r");
     assert(fp);
     compress_or_decompress(fp);
     fclose(fp);
