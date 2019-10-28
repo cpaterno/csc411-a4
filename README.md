@@ -35,34 +35,35 @@ By Jack Edgar and Chris Paterno
       - [ ] Convert every pixel’s color space from Component Video to RGB
      - [ ] Write out decompressed image to stdout
 
-- [ ] Codeword
-  - [ ] codeword macros
-  - [ ] `unsigned code_a(double a)`
-  - [ ] `int code_bcd(double d)`
+- [x] Codeword
+  - [x] codeword macro
+  - [x] private functions
+  - [x] `pack_word`
+  - [x] unpack functions
 
 - [x] Color Space
-  - [x] `double luma(double r, double g, double b)` // y 
-  - [x] `double diff_blue(double r, double g, double b)` // pb
-  - [x] `double diff_red(double r, double g, double b)` // pr
-  - [x] `double red(double y, double pb, double pr)` // red
-  - [x] `double green(double y, double pb, double pr)` // green
-  - [x] `double blue(double y, double pb, double pr)` // blue
+  - [x] `float luma(float r, float g, float b)` // y 
+  - [x] `float diff_blue(float r, float g, float b)` // pb
+  - [x] `float diff_red(float r, float g, float b)` // pr
+  - [x] `float red(float y, float pb, float pr)` // red
+  - [x] `float green(float y, float pb, float pr)` // green
+  - [x] `float blue(float y, float pb, float pr)` // blue
 
 - [x] Discrete Cosine Transform
-  - [x] `double luma_tl(double a, double b, double c, double d)` // y1
-  - [x] `double luma_tr(double a, double b, double c, double d)` // y2
-  - [x] `double luma_bl(double a, double b, double c, double d)` // y3
-  - [x] `double luma_br(double a, double b, double c, double d)` // y4
-  - [x] `double coef_a(double y1, double y2, double y3, double y4)` // a
-  - [x] `double coef_b(double y1, double y2, double y3, double y4)` // b
-  - [x] `double coef_c(double y1, double y2, double y3, double y4)` // c
-  - [x] `double coef_d(double y1, double y2, double y3, double y4)` // d
+  - [x] `float luma_tl(float a, float b, float c, float d)` // y1
+  - [x] `float luma_tr(float a, float b, float c, float d)` // y2
+  - [x] `float luma_bl(float a, float b, float c, float d)` // y3
+  - [x] `float luma_br(float a, float b, float c, float d)` // y4
+  - [x] `float coef_a(float y1, float y2, float y3, float y4)` // a
+  - [x] `float coef_b(float y1, float y2, float y3, float y4)` // b
+  - [x] `float coef_c(float y1, float y2, float y3, float y4)` // c
+  - [x] `float coef_d(float y1, float y2, float y3, float y4)` // d
 
 - [x] Decompressed PPM
   - [x] `Pnm_rgb_f` struct
-    - [x] double red
-    - [x] double green
-    - [x] double blue
+    - [x] float red
+    - [x] float green
+    - [x] float blue
    - [x] `unsigned num_blocks(Pnm_ppm ppm)`
    - [x] `Pnm_ppm trim(const Pnm_ppm ppm)`
    - [x] `Pnm_ppm floatrep(const Pnm_ppm ppm)`

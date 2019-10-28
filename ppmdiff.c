@@ -45,6 +45,7 @@ int main(int argc, char *argv[]) {
 }
 
 float rmsd(const Pnm_ppm i, const Pnm_ppm i_prime) {
+    assert(i->denominator == i_prime->denominator);
     float e = 1.0f;
     int w = 0;
     int h = 0;
@@ -83,8 +84,8 @@ float rmsd(const Pnm_ppm i, const Pnm_ppm i_prime) {
 		numer += diff_r * diff_r + diff_g * diff_g + diff_b * diff_b;
             }
         }
-	// 255 to normalize result
-        e = (float)sqrt(numer / denom) / 255;
+	// denominator to normalize result
+        e = (float)sqrt(numer / denom) / i->denominator;
     }
     return e;
 }
