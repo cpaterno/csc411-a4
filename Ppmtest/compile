@@ -14,7 +14,7 @@ CC=gcc
 
 # compile and link against course software and netpbm library
 CFLAGS="-I. -I/usr/local/cii/include -I/usr/local/include -I/csc/411/include"
-LIBS="-llocality -larith -lcii -lnetpbm -lm"
+LIBS="-llocality -lcii -lnetpbm -lm"
 LFLAGS="-L/usr/local/cii/lib -L/usr/local/lib -L/csc/411/lib"
 
 # these flags max out warnings and debug info
@@ -33,11 +33,10 @@ done
 ########### the middle part is different for each assignment
 # link together .o files + libraries to make executable binaries
 # using one case statement per executable binary
+
 case $link in
-    all|image) gcc $FLAGS $LFLAGS -o image image.o \
-	          bitpack.o compress.o codeword.o \
-	          dct.o color_space.o \
-	          ppm_c.o ppm_d.o \
+    all|ppmtest) gcc $FLAGS $LFLAGS -o ppmtest ppmtest.o  \
+	          ppm_d.o color_space.o \
 	          a2plain.o uarray2.o \
                   $LIBS
               linked=yes ;;
