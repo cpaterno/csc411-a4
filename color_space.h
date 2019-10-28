@@ -6,21 +6,21 @@
 // The last three functions compute the rgb space given y pb pr
 
 // return y
-extern double luma(double r, double g, double b);
+extern float luma(float r, float g, float b);
 
 // return pb
-extern double diff_blue(double r, double g, double b);
+extern float diff_blue(float r, float g, float b);
 
 // return pr
-extern double diff_red(double r, double g, double b);
+extern float diff_red(float r, float g, float b);
 
 // return red
-extern double red(double y, double pb, double pr);
+extern float red(float y, float pb, float pr);
 
 // return green
-extern double green(double y, double pb, double pr);
+extern float green(float y, float pb, float pr);
 
 // return blue
-extern double blue(double y, double pb, double pr);
+extern float blue(float y, float pb, float pr);
 
 #endif

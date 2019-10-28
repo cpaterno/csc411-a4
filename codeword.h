@@ -1,16 +1,28 @@
 #ifndef __CODEWORD__
 #define __CODEWORD__
 
-// Module exports 2 functions and a macro
-// The macro defines the codeword which is used by 2 other modules
+// Module exports 5 functions and a macro
+// The macro defines the codeword which is used by other modules
 
 #include <stdint.h>
 
-#define codeword uint32_t
+#define codeword uint32_t 
 
-// encode a into a 9b unsigned scaled int
-extern unsigned code_a(double a);
-// encode d into a 5b scaled int
-extern int code_bcd(double d);
+// pack 4 coded values into a codeword
+extern codeword pack_word(float a, float b, float c, 
+		          float d, float pb, float pr);
 
+// unpack a from a codeword
+extern float unpack_a(codeword word);
+// unpack b from a codeword
+extern float unpack_b(codeword word);
+// unpack c from a codeword
+extern float unpack_c(codeword word);
+// unpack d from a codeword
+extern float unpack_d(codeword word);
+
+// unpack pb from a codeword
+extern float unpack_pb(codeword word);
+// unpack pr from a codeword
+extern float unpack_pr(codeword word);
 #endif

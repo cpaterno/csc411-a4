@@ -44,9 +44,9 @@ Pnm_ppm Pnm_trim(const Pnm_ppm ppm) {
 }
 
 // helper function which converts an int rgb to float
-static double color_to_float(unsigned color, unsigned denom) {
+static float color_to_float(unsigned color, unsigned denom) {
     assert(denom != 0);
-    return (double)color / denom;
+    return (float)color / denom;
 }
 
 // return a new ppm which has pixels with floating point representation
@@ -80,7 +80,7 @@ Pnm_ppm Pnm_floatrep(const Pnm_ppm ppm) {
 }
 
 // helper function which converts an int rgb to float
-static unsigned color_to_int(double color, unsigned denom) {
+static unsigned color_to_int(float color, unsigned denom) {
     return color * denom;
 }
 

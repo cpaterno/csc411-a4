@@ -6,11 +6,11 @@
 // Module representing the decompressed ppm
 // This module builds off of pnm.h and exports 4 functions and one data structure
 
-// double version of Pnm_rgb used for float representation of the image's pixels
+// float version of Pnm_rgb used for float representation of the image's pixels
 // exported as pointer to follow pnm interface's format
 // if used for cv space, y = red, pb = green, pr = blue
 typedef struct Pnm_rgb_f {
-    double red, green, blue;
+    float red, green, blue;
 } *Pnm_rgb_f; 
 
 // count the number of 2 by 2 blocks in an even dimensioned image

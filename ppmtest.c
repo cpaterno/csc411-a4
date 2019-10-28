@@ -52,8 +52,8 @@ Pnm_ppm Pnm_cvrep(const Pnm_ppm ppm) {
     Pnm_ppm out = Pnm_floatrep(ppm);
     // update float values so they represent y, pb, pr
     Pnm_rgb_f pixel = NULL;
-    double y, pb, pr;
-    y = pb = pr = 0.0;
+    float y, pb, pr;
+    y = pb = pr = 0.0f;
     for (unsigned i = 0; i < out->height; ++i) {
         for (unsigned j = 0; j < out->width; ++j) {
 	    pixel = (Pnm_rgb_f)out->methods->at(out->pixels, j, i);
@@ -82,7 +82,7 @@ Pnm_ppm Pnm_rgbrep(const Pnm_ppm ppm) {
     // update float values so they represent r, g, b
     Pnm_rgb_f old_pixel = NULL;
     Pnm_rgb_f new_pixel = NULL;
-    double r, g, b;
+    float r, g, b;
     r = g = b = 0;
     for (unsigned i = 0; i < temp->height; ++i) {
         for (unsigned j = 0; j < temp->width; ++j) {

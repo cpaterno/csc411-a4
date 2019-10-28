@@ -1,31 +1,31 @@
 #include "color_space.h"
 
 // y
-double luma(double r, double g, double b) {
-    return 0.299 * r + 0.587 * g + 0.114 * b;
+float luma(float r, float g, float b) {
+    return 0.299f * r + 0.587f * g + 0.114f * b;
 }
 
 // pb
-double diff_blue(double r, double g, double b) {
-    return -0.168736 * r - 0.331264 * g + 0.5 * b;
+float diff_blue(float r, float g, float b) {
+    return -0.168736f * r - 0.331264f * g + 0.5f * b;
 }
 
 // pr
-double diff_red(double r, double g, double b) {
-    return 0.5 * r - 0.418688 * g - 0.081312 * b;
+float diff_red(float r, float g, float b) {
+    return 0.5f * r - 0.418688f * g - 0.081312f * b;
 }
 
 // red
-double red(double y, double pb, double pr) {
-    return 1.0 * y + 0.0 * pb + 1.402 * pr;
+float red(float y, float pb, float pr) {
+    return 1.0f * y + 0.0f * pb + 1.402f * pr;
 }
 
 // green
-double green(double y, double pb, double pr) {
-    return 1.0 * y - 0.344136 * pb - 0.714136 * pr;
+float green(float y, float pb, float pr) {
+    return 1.0f * y - 0.344136f * pb - 0.714136f * pr;
 }
 
 // blue
-double blue(double y, double pb, double pr) {
-    return 1.0 * y + 1.772 * pb + 0.0 * pr;
+float blue(float y, float pb, float pr) {
+    return 1.0f * y + 1.772f * pb + 0.0f * pr;
 }
