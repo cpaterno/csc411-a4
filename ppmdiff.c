@@ -4,7 +4,7 @@
 #include "pnm.h"
 #include "a2plain.h"
 
-double rmsd(const Pnm_ppm, const Pnm_ppm);
+float rmsd(const Pnm_ppm, const Pnm_ppm);
 
 int main(int argc, char *argv[]) {
     // read command line args and init file pointers
@@ -37,15 +37,15 @@ int main(int argc, char *argv[]) {
     }
     
     // root mean square difference
-    double e = rmsd(i, i_prime);
+    float e = rmsd(i, i_prime);
     printf("%.4f\n", e);
     // cleanup
     Pnm_ppmfree(&i);
     Pnm_ppmfree(&i_prime);
 }
 
-double rmsd(const Pnm_ppm i, const Pnm_ppm i_prime) {
-    double e = 1.0;
+float rmsd(const Pnm_ppm i, const Pnm_ppm i_prime) {
+    float e = 1.0f;
     int w = 0;
     int h = 0;
     // figure out valid dimensions and smallest dimensions
@@ -64,11 +64,11 @@ double rmsd(const Pnm_ppm i, const Pnm_ppm i_prime) {
     if (fabs(diff_w) > 1 || fabs(diff_h) > 1) {
         fprintf(stderr, "Difference in dimensions is too large\n");
     } else {
-        // doubles were chosen for less typing, and also we needed to 
+        // floats were chosen for less typing, and also we needed to 
 	// cast our unsigned ints to something we can subtract
-	double numer, denom, diff_r, diff_g, diff_b;
+	float numer, denom, diff_r, diff_g, diff_b;
         denom = 3 * w * h;
-        numer = diff_r = diff_g = diff_b = 0.0;
+        numer = diff_r = diff_g = diff_b = 0.0f;
         Pnm_rgb i_pixel;
         Pnm_rgb i_prime_pixel;
 	// compute the root mean square difference
@@ -77,14 +77,14 @@ double rmsd(const Pnm_ppm i, const Pnm_ppm i_prime) {
                 i_pixel = (Pnm_rgb)i->methods->at(i->pixels, j, k);
                 i_prime_pixel = (Pnm_rgb)i_prime->methods->at(i_prime->pixels,
                                                               j, k);
-                diff_r = (double)i_pixel->red - i_prime_pixel->red;
-                diff_g = (double)i_pixel->green - i_prime_pixel->green;
-                diff_b = (double)i_pixel->blue - i_prime_pixel->blue;
+                diff_r = (float)i_pixel->red - i_prime_pixel->red;
+                diff_g = (float)i_pixel->green - i_prime_pixel->green;
+                diff_b = (float)i_pixel->blue - i_prime_pixel->blue;
 		numer += diff_r * diff_r + diff_g * diff_g + diff_b * diff_b;
             }
         }
-	// 255.0 to normalize result
-        e = sqrt(numer / denom) / 255.0;
+	// 255 to normalize result
+        e = (float)sqrt(numer / denom) / 255;
     }
     return e;
 }

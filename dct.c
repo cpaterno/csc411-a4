@@ -1,41 +1,41 @@
 #include "dct.h"
 
 // y1
-double luma_tl(double a, double b, double c, double d) {
+float luma_tl(float a, float b, float c, float d) {
     return a - b - c + d;
 }
 
 // y2
-double luma_tr(double a, double b, double c, double d) {
+float luma_tr(float a, float b, float c, float d) {
     return a - b + c - d;
 }
 
 // y3
-double luma_bl(double a, double b, double c, double d){
+float luma_bl(float a, float b, float c, float d){
     return a + b - c - d;
 }
 
 // y4
-double luma_br(double a, double b, double c, double d) {
+float luma_br(float a, float b, float c, float d) {
     return a + b + c + d;
 }
 
 // a
-double coef_a(double y1, double y2, double y3, double y4) {
-    return (y4 + y3 + y2 + y1) / 4.0;
+float coef_a(float y1, float y2, float y3, float y4) {
+    return (y4 + y3 + y2 + y1) / 4.0f;
 }
 
 // b
-double coef_b(double y1, double y2, double y3, double y4) {
-    return (y4 + y3 - y2 - y1) / 4.0;
+float coef_b(float y1, float y2, float y3, float y4) {
+    return (y4 + y3 - y2 - y1) / 4.0f;
 }
 
 // c
-double coef_c(double y1, double y2, double y3, double y4) {
-    return (y4 - y3 + y2 - y1) / 4.0;
+float coef_c(float y1, float y2, float y3, float y4) {
+    return (y4 - y3 + y2 - y1) / 4.0f;
 }
 
 // d
-double coef_d(double y1, double y2, double y3, double y4) {
-    return (y4 - y3 - y2 + y1) / 4.0;
+float coef_d(float y1, float y2, float y3, float y4) {
+    return (y4 - y3 - y2 + y1) / 4.0f;
 }
