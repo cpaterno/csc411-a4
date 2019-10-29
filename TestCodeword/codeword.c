@@ -39,7 +39,7 @@ static int encode_bcd(float f, int max_int, float max_float) {
         f = -max_float;
     }
     // multiply f by scale factor
-    return f * (round(max_int / max_float));  
+    return round(f * ((float)(max_int / max_float)));  
 }
 
 // encode a
@@ -86,7 +86,7 @@ float unpack_a(codeword word) {
 
 static float decode_bcd(int code, int max_int, float max_float) {
     // multiply code by inverse scale factor
-    return code * round(max_float / (float)max_int);  
+    return code * (max_float / (float)max_int);  
 }
 
 // unpack b from a codeword
