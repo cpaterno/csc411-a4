@@ -27,14 +27,14 @@ esac
 # compile each argument to a .o file
 for cfile
 do
-  gcc $FLAGS $CFLAGS -c $cfile
+  $CC $FLAGS $CFLAGS -c $cfile
 done
 
 ########### the middle part is different for each assignment
 # link together .o files + libraries to make executable binaries
 # using one case statement per executable binary
 case $link in
-    all|image) gcc $FLAGS $LFLAGS -o image image.o \
+    all|image) $CC $FLAGS $LFLAGS -o image image.o \
 	          bitpack.o compress.o codeword.o \
 	          dct.o color_space.o \
 	          ppm_c.o ppm_d.o \

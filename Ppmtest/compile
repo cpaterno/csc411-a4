@@ -27,7 +27,7 @@ esac
 # compile each argument to a .o file
 for cfile
 do
-  gcc $FLAGS $CFLAGS -c $cfile
+  $CC $FLAGS $CFLAGS -c $cfile
 done
 
 ########### the middle part is different for each assignment
@@ -35,7 +35,7 @@ done
 # using one case statement per executable binary
 
 case $link in
-    all|ppmtest) gcc $FLAGS $LFLAGS -o ppmtest ppmtest.o  \
+    all|ppmtest) $CC $FLAGS $LFLAGS -o ppmtest ppmtest.o  \
 	          ppm_d.o color_space.o \
 	          a2plain.o uarray2.o \
                   $LIBS

@@ -27,7 +27,7 @@ esac
 # compile each argument to a .o file
 for cfile
 do
-  gcc $FLAGS $CFLAGS -c $cfile
+  $CC $FLAGS $CFLAGS -c $cfile
 done
 
 ########### the middle part is different for each assignment
@@ -35,7 +35,7 @@ done
 # using one case statement per executable binary
 
 case $link in
-    all|ppmdiff) gcc $FLAGS $LFLAGS -o ppmdiff ppmdiff.o \
+    all|ppmdiff) $CC $FLAGS $LFLAGS -o ppmdiff ppmdiff.o \
 	          a2plain.o uarray2.o \
                   $LIBS
               linked=yes ;;
