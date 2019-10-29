@@ -1,6 +1,7 @@
 #ifndef __PPM_C__
 #define __PPM_C__
 
+#include <stdio.h>
 #include "array.h"
 
 // Module representing a compressed ppm
