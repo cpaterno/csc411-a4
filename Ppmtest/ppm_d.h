@@ -1,4 +1,4 @@
-#ifndef __PPM_D__
+#ifndef __PPM_D_
 #define __PPM_D__
 
 #include "pnm.h"
