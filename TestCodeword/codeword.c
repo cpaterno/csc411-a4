@@ -16,86 +16,35 @@
 #define LSB_PB 4
 #define LSB_PR 0
 
-#define UMAX_9b 511
+#define MAX_A 511
 
-#define INTERVAL_MIN_I -15
-#define INTERVAL_MAX_I 15
-#define INTERVAL_MIN_F -0.3f
-#define INTERVAL_MAX_F 0.3f
-#define INTERVAL_RNG 31
+#define MAX_B_I 15
+#define MAX_B_F 0.3f
+#define MAX_C_I MAX_B_I
+#define MAX_C_F MAX_B_F
+#define MAX_D_I MAX_B_I
+#define MAX_D_F MAX_B_F
 
 #include <stdio.h> // testing only
 
-static bool IS_INIT = false;
-static float INTERVAL_F[INTERVAL_RNG];
-static float INTERVAL_I[INTERVAL_RNG];
-
-// fill set with evenly spaced values
-// basically implementing mathlab's linspace
-static void linspace(float s[], float x1, float x2, int n) {
-    assert(n > 1);
-    assert(x2 > x1);
-    float step = (x2 - x1) / (n - 1);
-    for (int i = 0; i < n; ++i) {
-        s[i] = x1 + (i * step);
-    }
-}
-
-// simple function to init_sets if they are not created already
-static void init_sets() {
-    if (!IS_INIT) {
-        linspace(INTERVAL_I, INTERVAL_MIN_I, INTERVAL_MAX_I, INTERVAL_RNG);
-	linspace(INTERVAL_F, INTERVAL_MIN_F, INTERVAL_MAX_F, INTERVAL_RNG);
-	IS_INIT = true;
-    }
-}
-
 /*----------------------------------------ENCODE--------------------------------------------*/
 
-// encode b, c, or d from f 
-static int encode_bcd(float f) {
-    // init value sets if they are not already created
-    init_sets(); 
-    int code = 0;
-    // handle edges and the last element of the set
-    if (f < INTERVAL_F[0]) {
-        code = (int)INTERVAL_I[0];
-    } else if (f >= INTERVAL_F[INTERVAL_RNG - 1]) {
-        code = INTERVAL_I[INTERVAL_RNG - 1];
-    // value is in the range of the set
-    } else {
-        float dist_l = 0.0f;
-	float dist_r = 0.0f;
-	// epsilon will be a 10th of the difference
-	// between values in the set
-	float epsilon = (INTERVAL_MAX_F - INTERVAL_MIN_F) 
-		         / (INTERVAL_RNG - 1) / 10.0f;
-	// go to almost last element
-	for (int i = 0; i < INTERVAL_RNG - 1; ++i) {
-	    // "equal" case
-	    if (fabs(f - INTERVAL_F[i]) < epsilon) {
-	        code = (int)INTERVAL_I[i];
-		break;
-	    } else if (f > INTERVAL_F[i]
-		       && f < INTERVAL_F[i + 1]) {
-	        dist_l = fabs(f - INTERVAL_F[i]);
-		dist_r = fabs(f - INTERVAL_F[i + 1]);
-		// bias towards greater number in even case
-		if (dist_l > dist_r) {
-		    code = (int)INTERVAL_I[i];
-		} else {
-		    code = (int)INTERVAL_I[i + 1];
-		}
-		break;
-	    }	    
-	}
+// encode b 
+static int encode_bcd(float f, int max_int, float max_float) {
+    // clamp f to be in the range of [-max_float, +max_float]
+    if (f > max_float) {
+        f = max_float;
     }
-    return code;
+    if (f < -max_float) {
+        f = -max_float;
+    }
+    // multiply f by scale factor
+    return round(f * ((float)(max_int / max_float)));  
 }
 
 // encode a
 static unsigned encode_a(float a) {
-    return (unsigned)round(a * UMAX_9b);
+    return (unsigned)round(a * MAX_A);
 }
 
 // pack 4 coded values into a codeword
@@ -104,9 +53,9 @@ codeword pack_word(float a, float b, float c,
     printf("a %f, b %f, c %f, d %f, pb %f, pr %f\n",
 	   a, b, c, d, pb, pr);	    
     unsigned code_a = encode_a(a);
-    int code_b = encode_bcd(b);
-    int code_c = encode_bcd(c);
-    int code_d = encode_bcd(d);
+    int code_b = encode_bcd(b, MAX_B_I, MAX_B_F);
+    int code_c = encode_bcd(c, MAX_C_I, MAX_B_F);
+    int code_d = encode_bcd(d, MAX_D_I, MAX_D_F);
     int idx_pb = Arith_index_of_chroma(pb);
     int idx_pr = Arith_index_of_chroma(pr);
     printf("a %d, b %d, c %d, d %d, pb %d, pr %d\n",
@@ -125,7 +74,7 @@ codeword pack_word(float a, float b, float c,
 
 // decode a
 static float decode_a(unsigned a) {
-    return (float)a * UMAX_9b;
+    return (float)a * MAX_A;
 }
 
 // unpack a from a codeword
@@ -135,43 +84,29 @@ float unpack_a(codeword word) {
     return a;
 }
 
-static float decode_bcd(int code) {
-    // init value sets if they are not already created
-    init_sets(); 
-    float f = 0.0f;
-    // epsilon will be a 10th of the difference
-    // between values in the set
-    float epsilon = (INTERVAL_MAX_I - INTERVAL_MIN_I) 
-		     / (INTERVAL_RNG - 1) / 10.0f;
-    // go through "int" interval and grab closest value
-    for (int i = 0; i < INTERVAL_RNG; ++i) {
-	// "equal" case
-	if (fabs((float)code - INTERVAL_I[i]) < epsilon) {
-	    f = INTERVAL_F[i];
-	    break;
-	} 
-    }
-    return f;
+static float decode_bcd(int code, int max_int, float max_float) {
+    // multiply code by inverse scale factor
+    return code * (max_float / (float)max_int);  
 }
 
 // unpack b from a codeword
 float unpack_b(codeword word) {
     uint64_t code_b = word; // Bitpack_gets(word, WIDTH_B, LSB_B);
-    float b = decode_bcd(code_b); 
+    float b = decode_bcd(code_b, MAX_B_I, MAX_B_F); 
     return b;
 }
 
 // unpack c from a codeword
 float unpack_c(codeword word) {
     uint64_t code_c = word; // Bitpack_gets(word, WIDTH_C, LSB_C);
-    float c = decode_bcd(code_c); 
+    float c = decode_bcd(code_c, MAX_C_I, MAX_C_F); 
     return c;
 }
 
 // unpack d from a codeword
 float unpack_d(codeword word) {
     uint64_t code_d = word; // Bitpack_gets(word, WIDTH_D, LSB_D);
-    float d = decode_bcd(code_d); 
+    float d = decode_bcd(code_d, MAX_D_I, MAX_D_F); 
     return d;
 }
 
