@@ -21,7 +21,7 @@ typedef struct Pnm_comp {
 extern Pnm_comp Pnm_comp_read(FILE *fp);
 
 // write a compressed image to a file
-extern void Pnm_comp_write(FILE *fp, Pnm_comp pnm);
+extern void Pnm_comp_write(FILE *fp, const Pnm_comp pnm);
 
 // free a compressed image, note it is assumed Pnm_comp is made from heap allocated memory
 extern void Pnm_comp_free(Pnm_comp *ppmp);

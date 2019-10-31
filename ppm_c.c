@@ -8,6 +8,7 @@
 
 // read a compressed image from a file
 Pnm_comp Pnm_comp_read(FILE *fp) {
+    assert(fp);
     unsigned height, width;
     int read = fscanf(fp, "Compressed image format 2\n%u %u", &width, &height);
     assert(read == 2);
@@ -43,9 +44,18 @@ Pnm_comp Pnm_comp_read(FILE *fp) {
 }
 
 // write a compressed image to a file
-void Pnm_comp_write(FILE *fp, Pnm_comp pnm) {
-    (void)fp;
-    (void)pnm;
+void Pnm_comp_write(FILE *fp, const Pnm_comp pnm) {
+    assert(fp && pnm);
+    fprintf(fp, "Compressed image format 2\n%u %u\n", pnm->width, pnm->height);
+    codeword *element = NULL;
+    char c;
+    for (int i = 0; i < Array_length(pnm->words); ++i) {
+	element = (codeword *)Array_get(pnm->words, i);
+        for (unsigned j = 0; j < sizeof(codeword); ++j) {
+            c = ((unsigned char *)element)[j];
+	    putchar(c);
+	}
+    }
 }
 
 // free a compressed image, note it is assumed Pnm_comp is made from heap allocated memory
