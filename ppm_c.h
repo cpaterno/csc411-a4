@@ -18,7 +18,7 @@ typedef struct Pnm_comp {
 } *Pnm_comp;
 
 // read a compressed image from a file
-extern void Pnm_comp_read(FILE *fp);
+extern Pnm_comp Pnm_comp_read(FILE *fp);
 
 // write a compressed image to a file
 extern void Pnm_comp_write(FILE *fp, Pnm_comp pnm);
