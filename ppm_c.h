@@ -17,7 +17,7 @@ typedef struct Pnm_comp {
     Array_T words;
 } *Pnm_comp;
 
-// create a Pnm_comp on the heap
+// create a new Pnm_comp on the heap
 extern Pnm_comp Pnm_comp_new(unsigned width, unsigned height, Array_T words);
 
 // read a compressed image from a file
