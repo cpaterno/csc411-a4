@@ -10,7 +10,8 @@ void bitprint(uint64_t n) {
 }
 
 int main() {
-    int64_t word = 0b11000111;
+    int64_t word = 0xC7;
+    bitprint(word);
     int64_t new_word = Bitpack_newu(word, 3, 2, 3);
     bitprint(new_word);
     printf("%lud\n", new_word);
