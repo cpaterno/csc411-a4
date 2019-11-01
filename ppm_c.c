@@ -4,7 +4,17 @@
 #include "codeword.h"
 #include "ppm_c.h"
 
-#define BITS_IN_BYTE 8
+// create a Pnm_comp on the heap
+Pnm_comp Pnm_comp_new(unsigned width, unsigned height, Array_T words) {
+    assert(width > 0 && height > 0);
+    assert(words);
+    Pnm_comp img;
+    NEW(img);
+    img->width = width;
+    img->height = height;
+    img->words = words;
+    return img;
+}
 
 // read a compressed image from a file
 Pnm_comp Pnm_comp_read(FILE *fp) {
@@ -17,30 +27,16 @@ Pnm_comp Pnm_comp_read(FILE *fp) {
 
     Array_T words = Array_new(width * height, sizeof(codeword));
 
-    codeword current;
-    codeword *element = NULL;
-    bool isDone = false;
     unsigned i;
-    for (i = 0; i < width * height && !isDone; ++i) {
-        current = 0;
-        for (long j = sizeof(codeword) - 1; j >= 0; --j) {
-            c = getc(fp);
-            if (c == EOF) {
-                isDone = true;
-                break;
-            }
-            current |= c << (j * BITS_IN_BYTE);
-        }
+    codeword *element = NULL;
+    for (i = 0; i < width * height && !feof(fp); ++i) {
         element = (codeword *)Array_get(words, i);
-        *element = current;
+	assert(sizeof(*element) == Array_size(words));
+	read = fread((void *)element, sizeof(char), sizeof(*element), fp);
+	assert(read == sizeof(*element));
     }
     assert(i == width * height);
-    Pnm_comp img;
-    NEW(img);
-    img->width = width;
-    img->height = height;
-    img->words = words;
-    return img;
+    return Pnm_comp_new(width, height, words);
 }
 
 // write a compressed image to a file
@@ -48,13 +44,10 @@ void Pnm_comp_write(FILE *fp, const Pnm_comp pnm) {
     assert(fp && pnm);
     fprintf(fp, "Compressed image format 2\n%u %u\n", pnm->width, pnm->height);
     codeword *element = NULL;
-    char c;
     for (int i = 0; i < Array_length(pnm->words); ++i) {
 	element = (codeword *)Array_get(pnm->words, i);
-        for (unsigned j = 0; j < sizeof(codeword); ++j) {
-            c = ((unsigned char *)element)[j];
-	    putchar(c);
-	}
+	assert(sizeof(*element) == Array_size(pnm->words));
+	fwrite((const void *)element, sizeof(char), sizeof(*element), fp);
     }
 }
 
