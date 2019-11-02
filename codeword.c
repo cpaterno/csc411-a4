@@ -27,8 +27,6 @@
 #define MAX_D_I MAX_B_I
 #define MAX_D_F MAX_B_F
 
-#include <stdio.h> // testing only
-
 /*----------------------------------------ENCODE--------------------------------------------*/
 
 // encode b 
@@ -60,17 +58,11 @@ codeword pack_word(float a, float b, float c,
     int idx_pr = Arith_index_of_chroma(pr);
     codeword word = 0;    
     word = Bitpack_newu(word, WIDTH_A, LSB_A, code_a);
-    printf("a\n");
     word = Bitpack_news(word, WIDTH_B, LSB_B, code_b);
-    printf("b\n");
     word = Bitpack_news(word, WIDTH_C, LSB_C, code_c);
-    printf("c\n");
     word = Bitpack_news(word, WIDTH_D, LSB_D, code_d);
-    printf("d\n");
     word = Bitpack_news(word, WIDTH_IDX, LSB_PB, idx_pb);
-    printf("pb\n");
     word = Bitpack_news(word, WIDTH_IDX, LSB_PR, idx_pr);
-    printf("pr\n");
     return word;
 }
 
@@ -78,7 +70,7 @@ codeword pack_word(float a, float b, float c,
 
 // decode a
 static float decode_a(unsigned a) {
-    return (float)a * MAX_A;
+    return (float)a / MAX_A;
 }
 
 // unpack a from a codeword
@@ -95,35 +87,35 @@ static float decode_bcd(int code, int max_int, float max_float) {
 
 // unpack b from a codeword
 float unpack_b(codeword word) {
-    uint64_t code_b = Bitpack_gets(word, WIDTH_B, LSB_B);
-    float b = decode_bcd(code_b, MAX_B_I, MAX_B_F); 
+    int64_t code_b = Bitpack_gets(word, WIDTH_B, LSB_B);
+    float b = decode_bcd(code_b, MAX_B_I, MAX_B_F);
     return b;
 }
 
 // unpack c from a codeword
 float unpack_c(codeword word) {
-    uint64_t code_c = Bitpack_gets(word, WIDTH_C, LSB_C);
+    int64_t code_c = Bitpack_gets(word, WIDTH_C, LSB_C);
     float c = decode_bcd(code_c, MAX_C_I, MAX_C_F); 
     return c;
 }
 
 // unpack d from a codeword
 float unpack_d(codeword word) {
-    uint64_t code_d = Bitpack_gets(word, WIDTH_D, LSB_D);
+    int64_t code_d = Bitpack_gets(word, WIDTH_D, LSB_D);
     float d = decode_bcd(code_d, MAX_D_I, MAX_D_F); 
     return d;
 }
 
 // unpack pb from a codeword
 float unpack_pb(codeword word) {
-    uint64_t idx_pb = Bitpack_gets(word, WIDTH_IDX, LSB_PB);
+    int64_t idx_pb = Bitpack_gets(word, WIDTH_IDX, LSB_PB);
     float pb = Arith_chroma_of_index(idx_pb); 
     return pb;
 }
 
 // unpack pr from a codeword
 float unpack_pr(codeword word) {
-    uint64_t idx_pr = Bitpack_gets(word, WIDTH_IDX, LSB_PR);
+    int64_t idx_pr = Bitpack_gets(word, WIDTH_IDX, LSB_PR);
     float pr = Arith_chroma_of_index(idx_pr); 
     return pr;
 }

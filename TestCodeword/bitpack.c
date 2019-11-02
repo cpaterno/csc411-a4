@@ -45,7 +45,7 @@ uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb) {
 int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb) {
     uint64_t new_word = Bitpack_getu(word, width, lsb);
     // if new_word should have sign bit
-    // width guaranteed not to be 0 because of Bitpack_getu()
+    // width guaranteed not to be 0 because of Bitpack_getu
     if (rightshift(new_word, width - 1)) {
 	uint64_t neg_bits = leftshift(-1, width);
 	new_word |= neg_bits;

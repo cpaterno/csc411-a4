@@ -27,8 +27,6 @@
 #define MAX_D_I MAX_B_I
 #define MAX_D_F MAX_B_F
 
-#include <stdio.h> // testing only
-
 /*----------------------------------------ENCODE--------------------------------------------*/
 
 // encode b 

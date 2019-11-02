@@ -43,39 +43,57 @@ uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb) {
 }
 
 int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb) {
-    return Bitpack_getu(word, width, lsb);
+    uint64_t new_word = Bitpack_getu(word, width, lsb);
+    // if new_word should have sign bit
+    // width guaranteed not to be 0 because of Bitpack_getu
+    if (rightshift(new_word, width - 1)) {
+	uint64_t neg_bits = leftshift(-1, width);
+	new_word |= neg_bits;
+    }
+    return new_word;
 }
 
-// insert value at lsb, with bitlength width, to word
+// core part of new algorithm used by both signed and unsigned new functions
+static inline uint64_t new_core(uint64_t word, unsigned width,
+		                unsigned lsb, uint64_t value) {
+    uint64_t temp = 0;
+    uint64_t left_bits = 0;
+    uint64_t clear_back = lsb + width;
+    if (clear_back != WSIZE) {
+    	temp = rightshift(word, clear_back);
+    	left_bits = leftshift(temp, clear_back);
+    }
+    uint64_t right_bits = 0;
+    uint64_t clear_front = WSIZE - lsb;
+    if (clear_front != WSIZE) {
+    	temp = leftshift(word, clear_front);
+    	right_bits = rightshift(temp, clear_front);
+    }
+    uint64_t shift_in = leftshift(value, lsb);
+    return left_bits | shift_in | right_bits;
+}
+
+// insert an unsigned value at lsb, with bitlength width, to word
 uint64_t Bitpack_newu(uint64_t word, unsigned width, 
 		      unsigned lsb, uint64_t value) {
     check(width, lsb);
     if (!Bitpack_fitsu(value, width)) {
 	RAISE(Bitpack_Overflow);    
     }
-    uint64_t clear_back = lsb + width;
-    uint64_t clear_front = WSIZE - lsb;
-    uint64_t temp = rightshift(word, clear_back);
-    uint64_t left_bits = leftshift(temp, clear_back);
-    temp = leftshift(word, clear_front);
-    uint64_t right_bits = rightshift(temp, clear_front);
-    uint64_t shift_in = leftshift(value, lsb);
-    return left_bits | shift_in | right_bits;
+    return new_core(word, width, lsb, value);
 }
 
+// insert a signed value at lsb, with bitlength width, to word
 uint64_t Bitpack_news(uint64_t word, unsigned width, 
 		      unsigned lsb, int64_t value) {
     check(width, lsb);
     if (!Bitpack_fitss(value, width)) {
 	RAISE(Bitpack_Overflow);    
     }
-    uint64_t clear_back = lsb + width;
-    uint64_t clear_front = WSIZE - lsb;
-    uint64_t temp = rightshift(word, clear_back);
-    uint64_t left_bits = leftshift(temp, clear_back);
-    temp = leftshift(word, clear_front);
-    uint64_t right_bits = rightshift(temp, clear_front);
-    uint64_t shift_in = leftshift(value, lsb);
-    return left_bits | shift_in | right_bits;
+    // shave off leading 1s, 
+    // width guaranteed not to be 0 because of Bitpack_fitss
+    value = leftshift(value, WSIZE - width);
+    value = rightshift(value, WSIZE - width);
+    return new_core(word, width, lsb, value);
 }
 
