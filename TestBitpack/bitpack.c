@@ -17,11 +17,19 @@ static inline uint64_t rightshift(uint64_t n, unsigned shift) {
 
 // check if a n fits into a word
 bool Bitpack_fitsu(uint64_t n, unsigned width) {
+    // a number can not fit into a word of 0 width
+    if (!width) {
+        return false;
+    }
     uint64_t max_pow = leftshift(1, width - 1);
     return n <= (max_pow | (max_pow - 1));
 }
 
 bool Bitpack_fitss(int64_t n, unsigned width) {
+    // a number can not fit into a word of 0 width
+    if (!width) {
+        return false;
+    }
     uint64_t max_pow = leftshift(1, width - 1);
     return n + max_pow <= (max_pow | (max_pow - 1));
 }
@@ -32,9 +40,13 @@ static inline void check(unsigned width, unsigned lsb) {
     assert(width + lsb <= WSIZE);
 }
 
-// extract bits starting from lsb, with bitlength width, from word 
+// extract a field starting from lsb, with length width, from word 
 uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb) {
     check(width, lsb);
+    // can't extract a 0 width field from a word
+    if (!width) {
+        return 0;
+    }
     uint64_t max_pow = leftshift(1, width - 1);
     uint64_t mask = max_pow | (max_pow - 1);
     mask = leftshift(mask, lsb);
@@ -73,7 +85,7 @@ static inline uint64_t new_core(uint64_t word, unsigned width,
     return left_bits | shift_in | right_bits;
 }
 
-// insert an unsigned value at lsb, with bitlength width, to word
+// insert a field starting from lsb, with length width, to word 
 uint64_t Bitpack_newu(uint64_t word, unsigned width, 
 		      unsigned lsb, uint64_t value) {
     check(width, lsb);
