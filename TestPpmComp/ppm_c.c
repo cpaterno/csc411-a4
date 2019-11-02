@@ -28,12 +28,14 @@ Pnm_comp Pnm_comp_read(FILE *fp) {
     // figure out number of codewords, but jumping to the end of the file
     // then substracting the current position - 1 from position of eof character
     long cur_pos = ftell(fp);
-    fseek(fp, 0, SEEK_END);
+    assert(cur_pos >= 0);
+    assert(fseek(fp, 0, SEEK_END) == 0);
     long eof_pos = ftell(fp);
+    assert(eof_pos >= 0);
     long num_words = (eof_pos - cur_pos) / sizeof(codeword);
     Array_T words = Array_new(num_words, sizeof(codeword));
     // move back to where we left off
-    fseek(fp, cur_pos, SEEK_SET);
+    assert(fseek(fp, cur_pos, SEEK_SET) == 0);
     // read codeword into element as 1 byte chunks
     codeword *element = NULL;
     for (int i = 0; i < Array_length(words); ++i) {
