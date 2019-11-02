@@ -59,19 +59,18 @@ codeword pack_word(float a, float b, float c,
     int idx_pb = Arith_index_of_chroma(pb);
     int idx_pr = Arith_index_of_chroma(pr);
     codeword word = 0;    
-    printf("%d\n", code_a);
     word = Bitpack_newu(word, WIDTH_A, LSB_A, code_a);
-    printf("%d\n", code_b);
+    printf("a\n");
     word = Bitpack_news(word, WIDTH_B, LSB_B, code_b);
-    printf("%d\n", code_c);
+    printf("b\n");
     word = Bitpack_news(word, WIDTH_C, LSB_C, code_c);
-    printf("%d\n", code_d);
+    printf("c\n");
     word = Bitpack_news(word, WIDTH_D, LSB_D, code_d);
-    printf("%d\n", idx_pb);
+    printf("d\n");
     word = Bitpack_news(word, WIDTH_IDX, LSB_PB, idx_pb);
-    printf("%d\n", idx_pr);
+    printf("pb\n");
     word = Bitpack_news(word, WIDTH_IDX, LSB_PR, idx_pr);
-    printf("Success\n");
+    printf("pr\n");
     return word;
 }
 
@@ -79,7 +78,7 @@ codeword pack_word(float a, float b, float c,
 
 // decode a
 static float decode_a(unsigned a) {
-    return (float)a / MAX_A;
+    return (float)a * MAX_A;
 }
 
 // unpack a from a codeword
@@ -97,7 +96,7 @@ static float decode_bcd(int code, int max_int, float max_float) {
 // unpack b from a codeword
 float unpack_b(codeword word) {
     uint64_t code_b = Bitpack_gets(word, WIDTH_B, LSB_B);
-    float b = decode_bcd(code_b, MAX_B_I, MAX_B_F);
+    float b = decode_bcd(code_b, MAX_B_I, MAX_B_F); 
     return b;
 }
 

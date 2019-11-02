@@ -65,6 +65,17 @@ uint64_t Bitpack_newu(uint64_t word, unsigned width,
 
 uint64_t Bitpack_news(uint64_t word, unsigned width, 
 		      unsigned lsb, int64_t value) {
-    return Bitpack_newu(word, width, lsb, value);
+    check(width, lsb);
+    if (!Bitpack_fitss(value, width)) {
+	RAISE(Bitpack_Overflow);    
+    }
+    uint64_t clear_back = lsb + width;
+    uint64_t clear_front = WSIZE - lsb;
+    uint64_t temp = rightshift(word, clear_back);
+    uint64_t left_bits = leftshift(temp, clear_back);
+    temp = leftshift(word, clear_front);
+    uint64_t right_bits = rightshift(temp, clear_front);
+    uint64_t shift_in = leftshift(value, lsb);
+    return left_bits | shift_in | right_bits;
 }
 

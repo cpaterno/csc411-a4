@@ -6,8 +6,8 @@ int main() {
    float b = -0.25f;
    float c = 0.3f;
    float d = -0.5f;
-   float pb = -0.1f; 
-   float pr = 0.1f;
+   float pb = -0.01f; 
+   float pr = -0.1f;
    printf("a %f, b %f, c %f, d %f, pb %f, pr %f\n",
            a, b, c, d, pb, pr);
    codeword word = pack_word(a, b, c, d, pb, pr);
