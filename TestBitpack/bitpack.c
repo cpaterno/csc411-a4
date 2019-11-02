@@ -59,7 +59,7 @@ int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb) {
     // if new_word should have sign bit
     // width guaranteed not to be 0 because of Bitpack_getu
     if (rightshift(new_word, width - 1)) {
-	uint64_t neg_bits = leftshift(-1, width);
+	uint64_t neg_bits = leftshift(UINT64_MAX, width);
 	new_word |= neg_bits;
     }
     return new_word;

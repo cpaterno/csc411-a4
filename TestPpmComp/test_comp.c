@@ -13,6 +13,9 @@ int main(int argc, char *argv[]) {
     }
     // make new comp img
     Pnm_comp img = Pnm_comp_read(instream);
+    if (instream != stdin) {
+    	fclose(instream);
+    }
     Pnm_comp_write(stdout, img);
     Pnm_comp_free(&img);    
     return 0;

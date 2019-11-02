@@ -25,24 +25,27 @@ Pnm_comp Pnm_comp_read(FILE *fp) {
     assert(read == 2);
     int c = getc(fp);
     assert(c == '\n');
-    // init words
-    long curr_pos = ftell(fp);
+    // figure out number of codewords, but jumping to the end of the file
+    // then substracting the current position - 1 from position of eof character
+    long cur_pos = ftell(fp);
     fseek(fp, 0, SEEK_END);
     long eof_pos = ftell(fp);
-    long num_words = eof_pos - curr_pos;
-    Array_T words = Array_new(, sizeof(codeword));
+    long num_words = (eof_pos - cur_pos) / sizeof(codeword);
+    Array_T words = Array_new(num_words, sizeof(codeword));
+    // move back to where we left off
+    fseek(fp, cur_pos, SEEK_SET);
     // read codeword into element as 1 byte chunks
-    unsigned i;
     codeword *element = NULL;
-    for (i = 0; i < width * height && !feof(fp); ++i) {
+    for (int i = 0; i < Array_length(words); ++i) {
         element = (codeword *)Array_get(words, i);
 	assert(sizeof(*element) == Array_size(words));
 	read = fread((void *)element, sizeof(char), sizeof(*element), fp);
-	printf("R: %d E: %d %d\n", read, *element, feof(fp));
 	assert(read == sizeof(*element));
     }
-    // only fails if EOF reached before all words ended
-    assert(i == width * height);
+    // read EOF character
+    getc(fp);
+    // assert that everything was read
+    assert(feof(fp));
     return Pnm_comp_new(width, height, words);
 }
 
