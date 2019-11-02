@@ -59,19 +59,12 @@ codeword pack_word(float a, float b, float c,
     int idx_pb = Arith_index_of_chroma(pb);
     int idx_pr = Arith_index_of_chroma(pr);
     codeword word = 0;    
-    printf("%d\n", code_a);
     word = Bitpack_newu(word, WIDTH_A, LSB_A, code_a);
-    printf("%d\n", code_b);
     word = Bitpack_news(word, WIDTH_B, LSB_B, code_b);
-    printf("%d\n", code_c);
     word = Bitpack_news(word, WIDTH_C, LSB_C, code_c);
-    printf("%d\n", code_d);
     word = Bitpack_news(word, WIDTH_D, LSB_D, code_d);
-    printf("%d\n", idx_pb);
     word = Bitpack_news(word, WIDTH_IDX, LSB_PB, idx_pb);
-    printf("%d\n", idx_pr);
     word = Bitpack_news(word, WIDTH_IDX, LSB_PR, idx_pr);
-    printf("Success\n");
     return word;
 }
 
@@ -96,35 +89,35 @@ static float decode_bcd(int code, int max_int, float max_float) {
 
 // unpack b from a codeword
 float unpack_b(codeword word) {
-    uint64_t code_b = Bitpack_gets(word, WIDTH_B, LSB_B);
+    int64_t code_b = Bitpack_gets(word, WIDTH_B, LSB_B);
     float b = decode_bcd(code_b, MAX_B_I, MAX_B_F);
     return b;
 }
 
 // unpack c from a codeword
 float unpack_c(codeword word) {
-    uint64_t code_c = Bitpack_gets(word, WIDTH_C, LSB_C);
+    int64_t code_c = Bitpack_gets(word, WIDTH_C, LSB_C);
     float c = decode_bcd(code_c, MAX_C_I, MAX_C_F); 
     return c;
 }
 
 // unpack d from a codeword
 float unpack_d(codeword word) {
-    uint64_t code_d = Bitpack_gets(word, WIDTH_D, LSB_D);
+    int64_t code_d = Bitpack_gets(word, WIDTH_D, LSB_D);
     float d = decode_bcd(code_d, MAX_D_I, MAX_D_F); 
     return d;
 }
 
 // unpack pb from a codeword
 float unpack_pb(codeword word) {
-    uint64_t idx_pb = Bitpack_gets(word, WIDTH_IDX, LSB_PB);
+    int64_t idx_pb = Bitpack_gets(word, WIDTH_IDX, LSB_PB);
     float pb = Arith_chroma_of_index(idx_pb); 
     return pb;
 }
 
 // unpack pr from a codeword
 float unpack_pr(codeword word) {
-    uint64_t idx_pr = Bitpack_gets(word, WIDTH_IDX, LSB_PR);
+    int64_t idx_pr = Bitpack_gets(word, WIDTH_IDX, LSB_PR);
     float pr = Arith_chroma_of_index(idx_pr); 
     return pr;
 }

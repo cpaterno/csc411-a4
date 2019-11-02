@@ -44,11 +44,11 @@ uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb) {
 
 int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb) {
     uint64_t new_word = Bitpack_getu(word, width, lsb);
-    uint64_t sign_bit = leftshift(1, width - 1) & new_word;
     // if new_word should have sign bit
-    if (rightshift(sign_bit, width - 1)) {
-	uint64_t temp = leftshift(-1, width - 1);
-	new_word |= temp;
+    // width guaranteed not to be 0 because of Bitpack_getu()
+    if (rightshift(new_word, width - 1)) {
+	uint64_t neg_bits = leftshift(-1, width);
+	new_word |= neg_bits;
     }
     return new_word;
 }
@@ -90,6 +90,10 @@ uint64_t Bitpack_news(uint64_t word, unsigned width,
     if (!Bitpack_fitss(value, width)) {
 	RAISE(Bitpack_Overflow);    
     }
+    // shave off leading 1s, 
+    // width guaranteed not to be 0 because of Bitpack_fitss
+    value = leftshift(value, WSIZE - width);
+    value = rightshift(value, WSIZE - width);
     return new_core(word, width, lsb, value);
 }
 
