@@ -25,14 +25,14 @@ Pnm_ppm Pnm_cvrep(const Pnm_ppm ppm) {
     y = pb = pr = 0.0f;
     for (unsigned i = 0; i < out->height; ++i) {
         for (unsigned j = 0; j < out->width; ++j) {
-	    pixel = (Pnm_rgb_f)out->methods->at(out->pixels, j, i);
-	    y = luma(pixel->red, pixel->green, pixel->blue);
-	    pb = diff_blue(pixel->red, pixel->green, pixel->blue);
-	    pr = diff_red(pixel->red, pixel->green, pixel->blue);
-	    pixel->red = y;
-	    pixel->green = pb;
-	    pixel->blue = pr;
-	}
+	        pixel = (Pnm_rgb_f)out->methods->at(out->pixels, j, i);
+	        y = luma(pixel->red, pixel->green, pixel->blue);
+	        pb = diff_blue(pixel->red, pixel->green, pixel->blue);
+	        pr = diff_red(pixel->red, pixel->green, pixel->blue);
+	        pixel->red = y;
+	        pixel->green = pb;
+	        pixel->blue = pr;
+	    }
     }
     return out;
 }
@@ -130,14 +130,14 @@ Pnm_ppm Pnm_rgbrep(const Pnm_ppm ppm) {
     r = g = b = 0;
     for (unsigned i = 0; i < temp->height; ++i) {
         for (unsigned j = 0; j < temp->width; ++j) {
-	    old_pixel = (Pnm_rgb_f)ppm->methods->at(ppm->pixels, j, i);
+	        old_pixel = (Pnm_rgb_f)ppm->methods->at(ppm->pixels, j, i);
             r = red(old_pixel->red, old_pixel->green, old_pixel->blue);
             g = green(old_pixel->red, old_pixel->green, old_pixel->blue);
             b = blue(old_pixel->red, old_pixel->green, old_pixel->blue);
-	    new_pixel = (Pnm_rgb_f)temp->methods->at(temp->pixels, j, i);
-	    new_pixel->red = r;
-	    new_pixel->green = g;
-	    new_pixel->blue = b;
+	        new_pixel = (Pnm_rgb_f)temp->methods->at(temp->pixels, j, i);
+	        new_pixel->red = r;
+	        new_pixel->green = g;
+	        new_pixel->blue = b;
         }
     }
     Pnm_ppm out = Pnm_intrep(temp);
@@ -145,7 +145,69 @@ Pnm_ppm Pnm_rgbrep(const Pnm_ppm ppm) {
     return out;
 }
 
+void words_to_blocks(Pnm_ppm img, const Array_T words) {
+    assert(img && words);
+    unsigned len = Array_length(words);
+    codeword *elem = NULL;
+    codeword word = 0;
+    float a, b, c, d, pb, pr;
+    a = b = c = d = pb = pr = 0.0f;
+    float y[BLOCKSIZE];
+    unsigned col = 0;
+    unsigned row = 0;
+    Pnm_rgb_f pixel = NULL;
+    for (unsigned i = 0; i < len; ++i) {
+        elem = (codeword *)Array_get(words, i);
+        word = *elem;
+        a = unpack_a(word);
+        b = unpack_b(word);
+        c = unpack_c(word);
+        d = unpack_d(word);
+        pb = unpack_pb(word);
+        pr = unpack_pr(word);
+        y[0] = luma_tl(a, b, c, d);
+        y[1] = luma_tr(a, b, c, d);
+        y[2] = luma_bl(a, b, c, d);
+        y[3] = luma_br(a, b, c, d);
+        pixel = (Pnm_rgb_f)img->methods->at(img->pixels, col, row);
+        pixel->red = y[0];
+        pixel->green = pb;
+        pixel->blue = pr;
+        pixel = (Pnm_rgb_f)img->methods->at(img->pixels, col + 1, row);
+        pixel->red = y[1];
+        pixel->green = pb;
+        pixel->blue = pr;
+        pixel = (Pnm_rgb_f)img->methods->at(img->pixels, col, row + 1);
+        pixel->red = y[2];
+        pixel->green = pb;
+        pixel->blue = pr;
+        pixel = (Pnm_rgb_f)img->methods->at(img->pixels, col + 1, row + 1);
+        pixel->red = y[3];
+        pixel->green = pb;
+        pixel->blue = pr;
+        col += BLOCKSIZE / 2;
+        row += BLOCKSIZE / 2;
+    }
+}
+
 // reads a compressed image and writes PPM
 void decompress(FILE *input) {
     assert(input);
+    Pnm_comp img_comp = Pnm_comp_read(input);
+    A2Methods_T methods = array2_methods_plain;
+    assert(methods);
+    Pnm_ppm img_decomp;
+    NEW(img_decomp);
+    img_decomp->width = img_comp->width;
+    img_decomp->height = img_comp->height;
+    img_decomp->denominator = 255;
+    img_decomp->methods = methods;
+    img_decomp->pixels = methods->new(img_decomp->width, img_decomp->height,
+                                      sizeof(struct Pnm_rgb_f));
+    // skip step 3
+    Pnm_comp_free(&img_comp);
+    Pnm_ppm img_rgb = Pnm_rgbrep(img_decomp);
+    Pnm_ppmfree(&img_decomp);
+    Pnm_ppmwrite(stdout, img_rgb);
+    Pnm_ppmfree(&img_rgb);
 }
