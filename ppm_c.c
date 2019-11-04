@@ -1,3 +1,4 @@
+#include <string.h>
 #include "mem.h"
 #include "assert.h"
 #include "codeword.h"
@@ -25,29 +26,30 @@ Pnm_comp Pnm_comp_read(FILE *fp) {
     assert(read == 2);
     int c = getc(fp);
     assert(c == '\n');
-    // figure out number of codewords, but jumping to the end of the file
-    // then substracting the current position - 1 from position of eof character
-    long cur_pos = ftell(fp);
-    assert(cur_pos >= 0);
-    assert(fseek(fp, 0, SEEK_END) == 0);
-    long eof_pos = ftell(fp);
-    assert(eof_pos >= 0);
-    long num_words = (eof_pos - cur_pos) / sizeof(codeword);
-    Array_T words = Array_new(num_words, sizeof(codeword));
-    // move back to where we left off
-    assert(fseek(fp, cur_pos, SEEK_SET) == 0);
-    // read codeword into element as 1 byte chunks
-    codeword *element = NULL;
-    for (int i = 0; i < Array_length(words); ++i) {
-        element = (codeword *)Array_get(words, i);
-	assert(sizeof(*element) == Array_size(words));
-	read = fread((void *)element, sizeof(char), sizeof(*element), fp);
-	assert(read == sizeof(*element));
+    Array_T words = Array_new(0, sizeof(codeword));
+    int size = Array_size(words);
+    int len = Array_length(words);
+    unsigned char buf[size];
+    void *elem = NULL;
+    int i = 0;
+    int j = 0;
+    while (!feof(fp)) {
+        buf[j++] = getc(fp);
+        if (j == size) {
+            j = 0;
+            if (i == len) {
+                if (i != 0) {
+                    len *= 2;
+                } else {
+                    len = 1;
+                }
+                Array_resize(words, len);
+            }
+            elem = Array_get(words, i++);
+            memcpy(elem, buf, size);
+        }
     }
-    // read EOF character
-    getc(fp);
-    // assert that everything was read
-    assert(feof(fp));
+    Array_resize(words, i);
     return Pnm_comp_new(width, height, words);
 }
 
@@ -59,9 +61,9 @@ void Pnm_comp_write(FILE *fp, const Pnm_comp pnm) {
     codeword *element = NULL;
     // write out codeword in 1 byte chunks
     for (int i = 0; i < Array_length(pnm->words); ++i) {
-	element = (codeword *)Array_get(pnm->words, i);
-	assert(sizeof(*element) == Array_size(pnm->words));
-	fwrite((const void *)element, sizeof(char), sizeof(*element), fp);
+	    element = (codeword *)Array_get(pnm->words, i);
+	    assert(sizeof(*element) == Array_size(pnm->words));
+	    fwrite((const void *)element, sizeof(char), sizeof(*element), fp);
     }
 }
 

@@ -54,15 +54,15 @@ codeword pack_word(float a, float b, float c,
     int code_b = encode_bcd(b, MAX_B_I, MAX_B_F);
     int code_c = encode_bcd(c, MAX_C_I, MAX_B_F);
     int code_d = encode_bcd(d, MAX_D_I, MAX_D_F);
-    int idx_pb = Arith_index_of_chroma(pb);
-    int idx_pr = Arith_index_of_chroma(pr);
+    unsigned idx_pb = Arith_index_of_chroma(pb);
+    unsigned idx_pr = Arith_index_of_chroma(pr);
     codeword word = 0;    
     word = Bitpack_newu(word, WIDTH_A, LSB_A, code_a);
     word = Bitpack_news(word, WIDTH_B, LSB_B, code_b);
     word = Bitpack_news(word, WIDTH_C, LSB_C, code_c);
     word = Bitpack_news(word, WIDTH_D, LSB_D, code_d);
-    word = Bitpack_news(word, WIDTH_IDX, LSB_PB, idx_pb);
-    word = Bitpack_news(word, WIDTH_IDX, LSB_PR, idx_pr);
+    word = Bitpack_newu(word, WIDTH_IDX, LSB_PB, idx_pb);
+    word = Bitpack_newu(word, WIDTH_IDX, LSB_PR, idx_pr);
     return word;
 }
 
@@ -108,14 +108,14 @@ float unpack_d(codeword word) {
 
 // unpack pb from a codeword
 float unpack_pb(codeword word) {
-    int64_t idx_pb = Bitpack_gets(word, WIDTH_IDX, LSB_PB);
+    uint64_t idx_pb = Bitpack_getu(word, WIDTH_IDX, LSB_PB);
     float pb = Arith_chroma_of_index(idx_pb); 
     return pb;
 }
 
 // unpack pr from a codeword
 float unpack_pr(codeword word) {
-    int64_t idx_pr = Bitpack_gets(word, WIDTH_IDX, LSB_PR);
+    uint64_t idx_pr = Bitpack_getu(word, WIDTH_IDX, LSB_PR);
     float pr = Arith_chroma_of_index(idx_pr); 
     return pr;
 }

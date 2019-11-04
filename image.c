@@ -4,10 +4,6 @@
 #include "assert.h"
 #include "compress.h"
 
-// temp macros to compile without doing anything
-#define compress NULL
-#define decompress compress
-
 static void (*compress_or_decompress)(FILE *input) = compress;
 
 int main(int argc, char *argv[]) {
