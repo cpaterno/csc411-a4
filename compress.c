@@ -32,7 +32,7 @@ Pnm_ppm Pnm_cvrep(const Pnm_ppm ppm) {
 }
 
 void block_update(Pnm_rgb_f *block, unsigned len,
-                  const Pnm_ppm img, unsigned r, unsigned c) {
+                  const Pnm_ppm img, unsigned c, unsigned r) {
     assert(block && len == 4);
     assert(img);
     assert(c + 1 < img->width && r + 1 < img->height);
@@ -74,11 +74,10 @@ void blocks_to_words(const Pnm_ppm ppm, Array_T words) {
     codeword word = 0;
     for (unsigned i = 0; i < height; i += 2) {
         for (unsigned j = 0; j < width; j += 2) {
-            block_update(block, blocksize, ppm, i, j);
+            block_update(block, blocksize, ppm, j, i);
             block_values(block, blocksize, &a, &b, &c, &d, &avg_pb, &avg_pr);
             word = pack_word(a, b, c, d, avg_pb, avg_pr);
             elem = (codeword *)Array_get(words, index++);
-            assert(sizeof(*elem) == Array_size(words));
             *elem = word;
         }
     }
@@ -141,51 +140,52 @@ Pnm_ppm Pnm_rgbrep(const Pnm_ppm ppm) {
     return out;
 }
 
+void unblock_values(codeword word, float *a, float *b, float *c,
+                    float *d, float *pb, float *pr) {
+    assert(a && b && c && d && pb && pr);
+    *a = unpack_a(word);
+    *b = unpack_b(word);
+    *c = unpack_c(word);
+    *d = unpack_d(word);
+    *pb = unpack_pb(word);
+    *pr = unpack_pr(word);
+}
+
+void update_float_pixel(Pnm_ppm img, unsigned c, unsigned r, 
+                  float y, float pb, float pr) {
+    assert(img);
+    Pnm_rgb_f pixel = NULL;
+    pixel = (Pnm_rgb_f)img->methods->at(img->pixels, c, r);
+    pixel->red = y;
+    pixel->green = pb;
+    pixel->blue = pr;
+}
+
 void words_to_blocks(Pnm_ppm img, const Array_T words) {
     assert(img && words);
     unsigned len = Array_length(words);
     codeword *elem = NULL;
-    codeword word = 0;
     float a, b, c, d, pb, pr;
     a = b = c = d = pb = pr = 0.0f;
     float y[4];
     unsigned col = 0;
     unsigned row = 0;
     unsigned width = img->methods->width(img->pixels);
-    Pnm_rgb_f pixel = NULL;
     for (unsigned i = 0; i < len; ++i) {
         if (col >= width) {
             row += 2;
             col = 0;
         }
         elem = (codeword *)Array_get(words, i);
-        word = *elem;
-        a = unpack_a(word);
-        b = unpack_b(word);
-        c = unpack_c(word);
-        d = unpack_d(word);
-        pb = unpack_pb(word);
-        pr = unpack_pr(word);
+        unblock_values(*elem, &a, &b, &c, &d, &pb, &pr);
         y[0] = luma_tl(a, b, c, d);
         y[1] = luma_tr(a, b, c, d);
         y[2] = luma_bl(a, b, c, d);
         y[3] = luma_br(a, b, c, d);
-        pixel = (Pnm_rgb_f)img->methods->at(img->pixels, col, row);
-        pixel->red = y[0];
-        pixel->green = pb;
-        pixel->blue = pr;
-        pixel = (Pnm_rgb_f)img->methods->at(img->pixels, col + 1, row);
-        pixel->red = y[1];
-        pixel->green = pb;
-        pixel->blue = pr;
-        pixel = (Pnm_rgb_f)img->methods->at(img->pixels, col, row + 1);
-        pixel->red = y[2];
-        pixel->green = pb;
-        pixel->blue = pr;
-        pixel = (Pnm_rgb_f)img->methods->at(img->pixels, col + 1, row + 1);
-        pixel->red = y[3];
-        pixel->green = pb;
-        pixel->blue = pr;
+        update_float_pixel(img, col, row, y[0], pb, pr);
+        update_float_pixel(img, col + 1, row, y[1], pb, pr);
+        update_float_pixel(img, col, row + 1, y[2], pb, pr);
+        update_float_pixel(img, col + 1, row + 1, y[3], pb, pr);
         col += 2;
     }
 }
