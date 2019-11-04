@@ -65,7 +65,7 @@ int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb) {
 
 // core part of new algorithm used by both signed and unsigned new functions
 static inline uint64_t new_core(uint64_t word, unsigned width,
-		                unsigned lsb, uint64_t value) {
+		                        unsigned lsb, uint64_t value) {
     uint64_t temp = 0;
     uint64_t left_bits = 0;
     uint64_t clear_back = lsb + width;
