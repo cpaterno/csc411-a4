@@ -7,13 +7,7 @@
 #include "color_space.h"
 #include "codeword.h"
 
-#define BLOCKSIZE 4
-#define TOP_LEFT 0
-#define TOP_RIGHT 1
-#define BOT_LEFT 2
-#define BOT_RIGHT 3
-
-/****************************************COMPRESS*********************************/
+/*******************************************COMPRESS*****************************************/
 
 Pnm_ppm Pnm_cvrep(const Pnm_ppm ppm) {
     assert(ppm);
@@ -39,27 +33,27 @@ Pnm_ppm Pnm_cvrep(const Pnm_ppm ppm) {
 
 void block_update(Pnm_rgb_f *block, unsigned len,
                   const Pnm_ppm img, unsigned r, unsigned c) {
-    assert(block && len == BLOCKSIZE);
+    assert(block && len == 4);
     assert(img);
-    assert(r + 1 < img->width && c + 1 < img->height);
-    block[TOP_LEFT] = (Pnm_rgb_f)img->methods->at(img->pixels, c, r);
-    block[TOP_RIGHT] = (Pnm_rgb_f)img->methods->at(img->pixels, c + 1, r);
-    block[BOT_LEFT] = (Pnm_rgb_f)img->methods->at(img->pixels, c, r + 1);
-    block[BOT_RIGHT] = (Pnm_rgb_f)img->methods->at(img->pixels, c + 1, r + 1);
+    assert(c + 1 < img->width && r + 1 < img->height);
+    block[0] = (Pnm_rgb_f)img->methods->at(img->pixels, c, r);
+    block[1] = (Pnm_rgb_f)img->methods->at(img->pixels, c + 1, r);
+    block[2] = (Pnm_rgb_f)img->methods->at(img->pixels, c, r + 1);
+    block[3] = (Pnm_rgb_f)img->methods->at(img->pixels, c + 1, r + 1);
 }
 
 void block_values(Pnm_rgb_f *block, unsigned len, float *a, float *b,
                   float *c, float *d, float *pb, float *pr) {
-    assert(block && len == BLOCKSIZE);
+    assert(block && len == 4);
     assert(a && b && c && d && pb && pr);
-    float y[BLOCKSIZE];
-    for (int i = 0; i < BLOCKSIZE; ++i) {
+    float y[len];
+    for (unsigned i = 0; i < len; ++i) {
         y[i] = block[i]->red;
         *pb += block[i]->green;
         *pr += block[i]->blue;
     }
-    *pb /= BLOCKSIZE;
-    *pr /= BLOCKSIZE;
+    *pb /= len;
+    *pr /= len;
     *a = coef_a(y[0], y[1], y[2], y[3]);
     *b = coef_b(y[0], y[1], y[2], y[3]);
     *c = coef_c(y[0], y[1], y[2], y[3]);
@@ -70,19 +64,21 @@ void blocks_to_words(const Pnm_ppm ppm, Array_T words) {
     assert(ppm && words);
     assert(ppm->height % 2 == 0 && ppm->width % 2 == 0);
     unsigned index = 0;
-    unsigned half_width = ppm->width / 2;
-    unsigned half_height = ppm->height / 2;
+    unsigned width = ppm->width;
+    unsigned height = ppm->height;
     float a, b, c, d, avg_pb, avg_pr;
     a = b = c = d = avg_pb = avg_pr = 0.0f;
-    Pnm_rgb_f block[4];
+    unsigned blocksize = 4;
+    Pnm_rgb_f block[blocksize];
     codeword *elem = NULL;
     codeword word = 0;
-    for (unsigned i = 0; i < half_height; i += BLOCKSIZE / 2) {
-        for (unsigned j = 0; j < half_width; j += BLOCKSIZE / 2) {
-            block_update(block, BLOCKSIZE, ppm, i, j);
-            block_values(block, BLOCKSIZE, &a, &b, &c, &d, &avg_pb, &avg_pr);
+    for (unsigned i = 0; i < height; i += 2) {
+        for (unsigned j = 0; j < width; j += 2) {
+            block_update(block, blocksize, ppm, i, j);
+            block_values(block, blocksize, &a, &b, &c, &d, &avg_pb, &avg_pr);
             word = pack_word(a, b, c, d, avg_pb, avg_pr);
             elem = (codeword *)Array_get(words, index++);
+            assert(sizeof(*elem) == Array_size(words));
             *elem = word;
         }
     }
@@ -110,7 +106,7 @@ void compress(FILE *input) {
     Pnm_comp_free(&img_comp);
 }
 
-/**************************************DECOMPRESS*********************************/
+/*******************************************DECOMPRESS***************************************/
 
 Pnm_ppm Pnm_rgbrep(const Pnm_ppm ppm) {
     assert(ppm);
@@ -152,7 +148,7 @@ void words_to_blocks(Pnm_ppm img, const Array_T words) {
     codeword word = 0;
     float a, b, c, d, pb, pr;
     a = b = c = d = pb = pr = 0.0f;
-    float y[BLOCKSIZE];
+    float y[4];
     unsigned col = 0;
     unsigned row = 0;
     unsigned width = img->methods->width(img->pixels);
