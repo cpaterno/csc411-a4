@@ -7,6 +7,8 @@
 #include "color_space.h"
 #include "codeword.h"
 
+#include <math.h> 
+
 /*******************************************COMPRESS*****************************************/
 
 Pnm_ppm Pnm_cvrep(const Pnm_ppm ppm) {
@@ -107,6 +109,16 @@ void compress(FILE *input) {
 
 /*******************************************DECOMPRESS***************************************/
 
+float clamp_rgb(float c) {
+    if (c < 0.0f) {
+        c = 0.0f;
+    }
+    if (c > 1.0f) {
+        c = 1.0f;
+    }
+    return c;
+}
+
 Pnm_ppm Pnm_rgbrep(const Pnm_ppm ppm) {
     assert(ppm);
     // assumed input image is a float rep in cv space
@@ -122,7 +134,7 @@ Pnm_ppm Pnm_rgbrep(const Pnm_ppm ppm) {
     Pnm_rgb_f old_pixel = NULL;
     Pnm_rgb_f new_pixel = NULL;
     float r, g, b;
-    r = g = b = 0;
+    r = g = b = 0.0f;
     for (unsigned i = 0; i < temp->height; ++i) {
         for (unsigned j = 0; j < temp->width; ++j) {
 	        old_pixel = (Pnm_rgb_f)ppm->methods->at(ppm->pixels, j, i);
@@ -130,9 +142,9 @@ Pnm_ppm Pnm_rgbrep(const Pnm_ppm ppm) {
             g = green(old_pixel->red, old_pixel->green, old_pixel->blue);
             b = blue(old_pixel->red, old_pixel->green, old_pixel->blue);
 	        new_pixel = (Pnm_rgb_f)temp->methods->at(temp->pixels, j, i);
-	        new_pixel->red = r;
-	        new_pixel->green = g;
-	        new_pixel->blue = b;
+	        new_pixel->red = clamp_rgb(r);
+	        new_pixel->green = clamp_rgb(g);
+	        new_pixel->blue = clamp_rgb(b);
         }
     }
     Pnm_ppm out = Pnm_intrep(temp);
