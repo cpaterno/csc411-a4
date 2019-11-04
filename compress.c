@@ -155,8 +155,13 @@ void words_to_blocks(Pnm_ppm img, const Array_T words) {
     float y[BLOCKSIZE];
     unsigned col = 0;
     unsigned row = 0;
+    unsigned width = img->methods->width(img->pixels);
     Pnm_rgb_f pixel = NULL;
     for (unsigned i = 0; i < len; ++i) {
+        if (col >= width) {
+            row += 2;
+            col = 0;
+        }
         elem = (codeword *)Array_get(words, i);
         word = *elem;
         a = unpack_a(word);
@@ -185,8 +190,7 @@ void words_to_blocks(Pnm_ppm img, const Array_T words) {
         pixel->red = y[3];
         pixel->green = pb;
         pixel->blue = pr;
-        col += BLOCKSIZE / 2;
-        row += BLOCKSIZE / 2;
+        col += 2;
     }
 }
 
@@ -204,7 +208,7 @@ void decompress(FILE *input) {
     img_decomp->methods = methods;
     img_decomp->pixels = methods->new(img_decomp->width, img_decomp->height,
                                       sizeof(struct Pnm_rgb_f));
-    // skip step 3
+    words_to_blocks(img_decomp, img_comp->words);
     Pnm_comp_free(&img_comp);
     Pnm_ppm img_rgb = Pnm_rgbrep(img_decomp);
     Pnm_ppmfree(&img_decomp);
