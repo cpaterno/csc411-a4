@@ -18,7 +18,7 @@ static inline uint64_t rightshift(uint64_t n, unsigned shift) {
 // check if a n fits into a word
 bool Bitpack_fitsu(uint64_t n, unsigned width) {
     // a number can not fit into a word of 0 width
-    if (!width) {
+    if (width == 0) {
         return false;
     }
     uint64_t max_pow = leftshift(1, width - 1);
@@ -27,7 +27,7 @@ bool Bitpack_fitsu(uint64_t n, unsigned width) {
 
 bool Bitpack_fitss(int64_t n, unsigned width) {
     // a number can not fit into a word of 0 width
-    if (!width) {
+    if (width == 0) {
         return false;
     }
     uint64_t max_pow = leftshift(1, width - 1);
@@ -44,23 +44,21 @@ static inline void check(unsigned width, unsigned lsb) {
 uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb) {
     check(width, lsb);
     // can't extract a 0 width field from a word
-    if (!width) {
+    if (width == 0) {
         return 0;
     }
-    uint64_t max_pow = leftshift(1, width - 1);
-    uint64_t mask = max_pow | (max_pow - 1);
-    mask = leftshift(mask, lsb);
-    uint64_t new_word = mask & word;
-    return rightshift(new_word, lsb);
+    uint64_t new_word = rightshift(word, lsb);
+    new_word = leftshift(new_word, WSIZE - width);
+    return rightshift(new_word, WSIZE - width);
 }
 
 int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb) {
     uint64_t new_word = Bitpack_getu(word, width, lsb);
     // if new_word should have sign bit
     // width guaranteed not to be 0 because of Bitpack_getu
-    if (rightshift(new_word, width - 1)) {
-	uint64_t neg_bits = leftshift(UINT64_MAX, width);
-	new_word |= neg_bits;
+    if (rightshift(new_word, width - 1) == 1) {
+	    uint64_t neg_bits = leftshift(UINT64_MAX, width - 1);
+	    new_word |= neg_bits;
     }
     return new_word;
 }
@@ -90,7 +88,7 @@ uint64_t Bitpack_newu(uint64_t word, unsigned width,
 		      unsigned lsb, uint64_t value) {
     check(width, lsb);
     if (!Bitpack_fitsu(value, width)) {
-	RAISE(Bitpack_Overflow);    
+	    RAISE(Bitpack_Overflow);    
     }
     return new_core(word, width, lsb, value);
 }
@@ -100,7 +98,7 @@ uint64_t Bitpack_news(uint64_t word, unsigned width,
 		      unsigned lsb, int64_t value) {
     check(width, lsb);
     if (!Bitpack_fitss(value, width)) {
-	RAISE(Bitpack_Overflow);    
+	    RAISE(Bitpack_Overflow);    
     }
     // shave off leading 1s, 
     // width guaranteed not to be 0 because of Bitpack_fitss
