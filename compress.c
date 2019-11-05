@@ -7,8 +7,6 @@
 #include "color_space.h"
 #include "codeword.h"
 
-#include <math.h> 
-
 /*******************************************COMPRESS*****************************************/
 
 Pnm_ppm Pnm_cvrep(const Pnm_ppm ppm) {
@@ -202,10 +200,20 @@ void words_to_blocks(Pnm_ppm img, const Array_T words) {
     }
 }
 
+void bitprint(uint64_t n) {
+    for (uint64_t i = (uint64_t)1 << 63; i > 0; i /= 2) {
+        (n & i) ? printf("1") : printf("0");
+    }
+    printf("\n");
+}
+
 // reads a compressed image and writes PPM
 void decompress(FILE *input) {
     assert(input);
     Pnm_comp img_comp = Pnm_comp_read(input);
+    /*for (int i = 0; i < Array_length(img_comp->words); ++i) {
+        bitprint(*(codeword *)Array_get(img_comp->words, i));
+    }*/
     A2Methods_T methods = array2_methods_plain;
     assert(methods);
     Pnm_ppm img_decomp;
