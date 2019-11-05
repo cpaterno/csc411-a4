@@ -200,12 +200,12 @@ void words_to_blocks(Pnm_ppm img, const Array_T words) {
     }
 }
 
-void bitprint(uint64_t n) {
+/*void bitprint(uint64_t n) {
     for (uint64_t i = (uint64_t)1 << 63; i > 0; i /= 2) {
         (n & i) ? printf("1") : printf("0");
     }
     printf("\n");
-}
+}*/
 
 // reads a compressed image and writes PPM
 void decompress(FILE *input) {
