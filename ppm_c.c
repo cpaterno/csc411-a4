@@ -30,7 +30,7 @@ Pnm_comp Pnm_comp_read(FILE *fp) {
     int size = Array_size(words);
     int len = Array_length(words);
     unsigned char buf[size];
-    void *elem = NULL;
+    codeword *element = NULL;
     int i = 0;
     int j = 0;
     while (!feof(fp)) {
@@ -45,8 +45,9 @@ Pnm_comp Pnm_comp_read(FILE *fp) {
                 }
                 Array_resize(words, len);
             }
-            elem = Array_get(words, i++);
-            memcpy(elem, buf, size);
+            element = (codeword *)Array_get(words, i++);
+            assert(sizeof(*element) == size);
+            memcpy(element, buf, size);
         }
     }
     Array_resize(words, i);
@@ -59,11 +60,16 @@ void Pnm_comp_write(FILE *fp, const Pnm_comp pnm) {
     // write header
     fprintf(fp, "Compressed image format 2\n%u %u\n", pnm->width, pnm->height);
     codeword *element = NULL;
+    int size = Array_size(pnm->words);
+    unsigned char buf[size];
     // write out codeword in 1 byte chunks
     for (int i = 0; i < Array_length(pnm->words); ++i) {
 	    element = (codeword *)Array_get(pnm->words, i);
 	    assert(sizeof(*element) == Array_size(pnm->words));
-	    fwrite((const void *)element, sizeof(char), sizeof(*element), fp);
+        memcpy(buf, element, size);
+        for (int j = 0; j < size; ++j) {
+            putc(buf[j], fp);
+        }
     }
 }
 

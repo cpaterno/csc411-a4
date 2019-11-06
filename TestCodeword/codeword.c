@@ -27,6 +27,8 @@
 #define MAX_D_I MAX_B_I
 #define MAX_D_F MAX_B_F
 
+#include <stdio.h> // TODO
+
 /*----------------------------------------ENCODE--------------------------------------------*/
 
 // encode b 
@@ -39,7 +41,7 @@ static int encode_bcd(float f, int max_int, float max_float) {
         f = -max_float;
     }
     // multiply f by scale factor
-    return round(f * ((float)(max_int / max_float)));  
+    return round(f * ((float)max_int / max_float));  
 }
 
 // encode a
@@ -49,7 +51,7 @@ static unsigned encode_a(float a) {
 
 // pack 4 coded values into a codeword
 codeword pack_word(float a, float b, float c, 
-		   float d, float pb, float pr) {
+		           float d, float pb, float pr) {
     unsigned code_a = encode_a(a);
     int code_b = encode_bcd(b, MAX_B_I, MAX_B_F);
     int code_c = encode_bcd(c, MAX_C_I, MAX_B_F);
@@ -82,6 +84,7 @@ float unpack_a(codeword word) {
 
 static float decode_bcd(int code, int max_int, float max_float) {
     // multiply code by inverse scale factor
+    printf("%d\n", code);
     return code * (max_float / (float)max_int);  
 }
 
@@ -116,6 +119,6 @@ float unpack_pb(codeword word) {
 // unpack pr from a codeword
 float unpack_pr(codeword word) {
     uint64_t idx_pr = Bitpack_getu(word, WIDTH_IDX, LSB_PR);
-    float pr = Arith_chroma_of_index(idx_pr); 
+    float pr = Arith_chroma_of_index(idx_pr);
     return pr;
 }

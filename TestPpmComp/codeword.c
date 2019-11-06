@@ -39,7 +39,7 @@ static int encode_bcd(float f, int max_int, float max_float) {
         f = -max_float;
     }
     // multiply f by scale factor
-    return round(f * ((float)(max_int / max_float)));  
+    return round(f * ((float)max_int / max_float));  
 }
 
 // encode a
@@ -116,6 +116,6 @@ float unpack_pb(codeword word) {
 // unpack pr from a codeword
 float unpack_pr(codeword word) {
     uint64_t idx_pr = Bitpack_getu(word, WIDTH_IDX, LSB_PR);
-    float pr = Arith_chroma_of_index(idx_pr); 
+    float pr = Arith_chroma_of_index(idx_pr);
     return pr;
 }
