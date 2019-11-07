@@ -7,6 +7,26 @@
 #include "color_space.h"
 #include "codeword.h"
 
+Array_T as;
+Array_T bs;
+Array_T cs;
+Array_T ds;
+Array_T pbs;
+Array_T prs;
+
+Pnm_ppm Pnm_cvrep(const Pnm_ppm);
+void block_update(Pnm_rgb_f *, unsigned, const Pnm_ppm, unsigned, unsigned);
+void block_values(Pnm_rgb_f *, unsigned, float *, float *, 
+                  float *, float *, float *, float *);
+void blocks_to_words(const Pnm_ppm, Array_T);
+void compress(FILE *);
+float clamp_rgb(float);
+Pnm_ppm Pnm_rgbrep(const Pnm_ppm);
+void unblock_values(codeword, float *, float *, float *, float *, float *, float *);
+void update_float_pixel(Pnm_ppm, unsigned, unsigned, float, float, float);
+void words_to_blocks(Pnm_ppm, const Array_T);
+void decompress(FILE *);
+
 /*******************************************COMPRESS*****************************************/
 
 Pnm_ppm Pnm_cvrep(const Pnm_ppm ppm) {
@@ -61,7 +81,8 @@ void block_values(Pnm_rgb_f *block, unsigned len, float *a, float *b,
 }
 
 void blocks_to_words(const Pnm_ppm ppm, Array_T words) {
-    assert(ppm && words);
+    (void)words;
+    assert(ppm /*&& words*/);
     assert(ppm->height % 2 == 0 && ppm->width % 2 == 0);
     unsigned index = 0;
     unsigned width = ppm->width;
@@ -70,15 +91,28 @@ void blocks_to_words(const Pnm_ppm ppm, Array_T words) {
     a = b = c = d = avg_pb = avg_pr = 0.0f;
     unsigned blocksize = 4;
     Pnm_rgb_f block[blocksize];
-    codeword *elem = NULL;
-    codeword word = 0;
+    /*codeword *elem = NULL;
+    codeword word = 0;*/
     for (unsigned i = 0; i < height; i += 2) {
         for (unsigned j = 0; j < width; j += 2) {
             block_update(block, blocksize, ppm, j, i);
             block_values(block, blocksize, &a, &b, &c, &d, &avg_pb, &avg_pr);
-            word = pack_word(a, b, c, d, avg_pb, avg_pr);
+            float *bla = Array_get(as, index);
+            *bla = a; 
+            bla = Array_get(bs, index);
+            *bla = b;  
+            bla = Array_get(cs, index);
+            *bla = c;  
+            bla = Array_get(ds, index);
+            *bla = d;
+            bla = Array_get(pbs, index);
+            *bla = avg_pb;
+            bla = Array_get(prs, index);
+            *bla = avg_pr;
+            ++index;  
+            /*word = pack_word(a, b, c, d, avg_pb, avg_pr);
             elem = (codeword *)Array_get(words, index++);
-            *elem = word;
+            *elem = word;*/
         }
     }
 }
@@ -97,12 +131,26 @@ void compress(FILE *input) {
     Pnm_ppm img_cv = Pnm_cvrep(img_trim);
     Pnm_ppmfree(&img_trim);
     unsigned num_blocks = Pnm_num_blocks(img_cv);
-    Array_T words = Array_new(num_blocks, sizeof(codeword));
+    /*Array_T words = Array_new(num_blocks, sizeof(codeword));
     blocks_to_words(img_cv, words);
     Pnm_comp img_comp = Pnm_comp_new(img_cv->width, img_cv->height, words);
     Pnm_ppmfree(&img_cv);
     Pnm_comp_write(stdout, img_comp);
-    Pnm_comp_free(&img_comp);
+    Pnm_comp_free(&img_comp);*/
+    
+    // ROUND TRIP TESTING
+    as = Array_new(num_blocks, sizeof(float));
+    bs = Array_new(num_blocks, sizeof(float));
+    cs = Array_new(num_blocks, sizeof(float));
+    ds = Array_new(num_blocks, sizeof(float));  
+    pbs = Array_new(num_blocks, sizeof(float));
+    prs = Array_new(num_blocks, sizeof(float));
+    blocks_to_words(img_cv, NULL);
+    words_to_blocks(img_cv, NULL);
+    Pnm_ppm img_rgb = Pnm_rgbrep(img_cv);
+    Pnm_ppmfree(&img_cv);
+    Pnm_ppmwrite(stdout, img_rgb);
+    Pnm_ppmfree(&img_rgb);
 }
 
 /*******************************************DECOMPRESS***************************************/
@@ -162,7 +210,7 @@ void unblock_values(codeword word, float *a, float *b, float *c,
 }
 
 void update_float_pixel(Pnm_ppm img, unsigned c, unsigned r, 
-                  float y, float pb, float pr) {
+                        float y, float pb, float pr) {
     assert(img);
     Pnm_rgb_f pixel = NULL;
     pixel = (Pnm_rgb_f)img->methods->at(img->pixels, c, r);
@@ -172,9 +220,10 @@ void update_float_pixel(Pnm_ppm img, unsigned c, unsigned r,
 }
 
 void words_to_blocks(Pnm_ppm img, const Array_T words) {
-    assert(img && words);
-    unsigned len = Array_length(words);
-    codeword *elem = NULL;
+    (void)words;
+    assert(img /*&& words*/);
+    unsigned len = Array_length(/*words*/as);
+    //codeword *elem = NULL;
     float a, b, c, d, pb, pr;
     a = b = c = d = pb = pr = 0.0f;
     float y[4];
@@ -186,8 +235,20 @@ void words_to_blocks(Pnm_ppm img, const Array_T words) {
             row += 2;
             col = 0;
         }
-        elem = (codeword *)Array_get(words, i);
-        unblock_values(*elem, &a, &b, &c, &d, &pb, &pr);
+        /*elem = (codeword *)Array_get(words, i);
+        unblock_values(*elem, &a, &b, &c, &d, &pb, &pr);*/
+        float *bla = Array_get(as, i);
+        a = *bla; 
+        bla = Array_get(bs, i);
+        b = *bla;  
+        bla = Array_get(cs, i);
+        c = *bla;  
+        bla = Array_get(ds, i);
+        d = *bla;
+        bla = Array_get(pbs, i);
+        pb = *bla;
+        bla = Array_get(prs, i);
+        pr = *bla;
         y[0] = luma_tl(a, b, c, d);
         y[1] = luma_tr(a, b, c, d);
         y[2] = luma_bl(a, b, c, d);
@@ -200,20 +261,20 @@ void words_to_blocks(Pnm_ppm img, const Array_T words) {
     }
 }
 
-void bitprint(uint64_t n) {
+/*void bitprint(uint64_t n) {
     for (uint64_t i = (uint64_t)1 << 63; i > 0; i /= 2) {
         (n & i) ? printf("1") : printf("0");
     }
     printf("\n");
-}
+}*/
 
 // reads a compressed image and writes PPM
 void decompress(FILE *input) {
     assert(input);
     Pnm_comp img_comp = Pnm_comp_read(input);
-    for (int i = 0; i < Array_length(img_comp->words); ++i) {
+    /*for (int i = 0; i < Array_length(img_comp->words); ++i) {
         bitprint(*(codeword *)Array_get(img_comp->words, i));
-    }
+    }*/
     A2Methods_T methods = array2_methods_plain;
     assert(methods);
     Pnm_ppm img_decomp;
@@ -228,6 +289,6 @@ void decompress(FILE *input) {
     Pnm_comp_free(&img_comp);
     Pnm_ppm img_rgb = Pnm_rgbrep(img_decomp);
     Pnm_ppmfree(&img_decomp);
-    //Pnm_ppmwrite(stdout, img_rgb);
+    Pnm_ppmwrite(stdout, img_rgb);
     Pnm_ppmfree(&img_rgb);
 }
