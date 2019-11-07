@@ -1,5 +1,4 @@
 #include <math.h>
-#include <stdbool.h>
 #include "assert.h"
 #include "bitpack.h"
 #include "arith411.h"
@@ -27,13 +26,6 @@
 #define MAX_D_I MAX_B_I
 #define MAX_D_F MAX_B_F
 
-#include <stdio.h> // TODO
-void bitprint(uint64_t n) {
-    for (uint64_t i = (uint64_t)1 << 63; i > 0; i /= 2) {
-        (n & i) ? printf("1") : printf("0");
-    }
-    printf("\n");
-}
 /*----------------------------------------ENCODE--------------------------------------------*/
 
 // encode b 
@@ -59,23 +51,17 @@ codeword pack_word(float a, float b, float c,
 		           float d, float pb, float pr) {
     unsigned code_a = encode_a(a);
     int code_b = encode_bcd(b, MAX_B_I, MAX_B_F);
-    int code_c = encode_bcd(c, MAX_C_I, MAX_B_F);
+    int code_c = encode_bcd(c, MAX_C_I, MAX_C_F);
     int code_d = encode_bcd(d, MAX_D_I, MAX_D_F);
     unsigned idx_pb = Arith_index_of_chroma(pb);
     unsigned idx_pr = Arith_index_of_chroma(pr);
     codeword word = 0;    
     word = Bitpack_newu(word, WIDTH_A, LSB_A, code_a);
-    bitprint(word);
     word = Bitpack_news(word, WIDTH_B, LSB_B, code_b);
-    bitprint(word);
     word = Bitpack_news(word, WIDTH_C, LSB_C, code_c);
-    bitprint(word);
     word = Bitpack_news(word, WIDTH_D, LSB_D, code_d);
-    bitprint(word);
     word = Bitpack_newu(word, WIDTH_IDX, LSB_PB, idx_pb);
-    bitprint(word);
     word = Bitpack_newu(word, WIDTH_IDX, LSB_PR, idx_pr);
-    bitprint(word);
     return word;
 }
 
@@ -95,7 +81,6 @@ float unpack_a(codeword word) {
 
 static float decode_bcd(int code, int max_int, float max_float) {
     // multiply code by inverse scale factor
-    printf("%d\n", code);
     return code * (max_float / (float)max_int);  
 }
 

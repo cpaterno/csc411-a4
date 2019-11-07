@@ -115,6 +115,7 @@ uint64_t Bitpack_news(uint64_t word, unsigned width,
     if (!Bitpack_fitss(value, width)) {
 	    RAISE(Bitpack_Overflow);    
     }
+    // shave off leading sign bits (1s)
     value = leftshift(value, WSIZE - width);
     value = urightshift(value, WSIZE - width);
     return new_core(word, width, lsb, value);

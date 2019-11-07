@@ -1,5 +1,4 @@
 #include <math.h>
-#include <stdbool.h>
 #include "assert.h"
 #include "bitpack.h"
 #include "arith411.h"
@@ -49,10 +48,10 @@ static unsigned encode_a(float a) {
 
 // pack 4 coded values into a codeword
 codeword pack_word(float a, float b, float c, 
-		   float d, float pb, float pr) {
+		           float d, float pb, float pr) {
     unsigned code_a = encode_a(a);
     int code_b = encode_bcd(b, MAX_B_I, MAX_B_F);
-    int code_c = encode_bcd(c, MAX_C_I, MAX_B_F);
+    int code_c = encode_bcd(c, MAX_C_I, MAX_C_F);
     int code_d = encode_bcd(d, MAX_D_I, MAX_D_F);
     unsigned idx_pb = Arith_index_of_chroma(pb);
     unsigned idx_pr = Arith_index_of_chroma(pr);
