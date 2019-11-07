@@ -4,8 +4,6 @@
 #define WSIZE 64
 Except_T Bitpack_Overflow = {"Value doesn't fit in width\n"};
 
-#include <stdio.h> // TODO
-
 // private bitwise shift functions, to handle undefined behavior in hardware
 static inline uint64_t leftshift(uint64_t n, unsigned shift) {
     assert(shift <= WSIZE);
@@ -55,8 +53,8 @@ bool Bitpack_fitss(int64_t n, unsigned width) {
     if (width == 0) {
         return false;
     }
-    uint64_t max_pow = leftshift(1, width - 1);
-    return n + max_pow <= (max_pow | (max_pow - 1));
+    int64_t min = srightshift(INT64_MIN, WSIZE - width);
+    return n >= min && n <= ~min;
 }
 
 // helper function which contains the asserts used in the following 4 functions 
@@ -117,9 +115,5 @@ uint64_t Bitpack_news(uint64_t word, unsigned width,
     if (!Bitpack_fitss(value, width)) {
 	    RAISE(Bitpack_Overflow);    
     }
-    // shave off leading 1s, 
-    // width guaranteed not to be 0 because of Bitpack_fitss
-    //value = leftshift(value, WSIZE - width);
-    //value = rightshift(value, WSIZE - width);
     return new_core(word, width, lsb, value);
 }

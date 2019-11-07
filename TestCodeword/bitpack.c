@@ -53,8 +53,8 @@ bool Bitpack_fitss(int64_t n, unsigned width) {
     if (width == 0) {
         return false;
     }
-    uint64_t max_pow = leftshift(1, width - 1);
-    return n + max_pow <= (max_pow | (max_pow - 1));
+    int64_t min = srightshift(INT64_MIN, WSIZE - width);
+    return n >= min && n <= ~min;
 }
 
 // helper function which contains the asserts used in the following 4 functions 
@@ -100,7 +100,7 @@ static inline uint64_t new_core(uint64_t word, unsigned width,
 
 // insert a field starting from lsb, with length width, to word 
 uint64_t Bitpack_newu(uint64_t word, unsigned width, 
-		      unsigned lsb, uint64_t value) {
+		              unsigned lsb, uint64_t value) {
     check(width, lsb);
     if (!Bitpack_fitsu(value, width)) {
 	    RAISE(Bitpack_Overflow);    
@@ -110,14 +110,12 @@ uint64_t Bitpack_newu(uint64_t word, unsigned width,
 
 // insert a signed value at lsb, with bitlength width, to word
 uint64_t Bitpack_news(uint64_t word, unsigned width, 
-		      unsigned lsb, int64_t value) {
+		              unsigned lsb, int64_t value) {
     check(width, lsb);
     if (!Bitpack_fitss(value, width)) {
 	    RAISE(Bitpack_Overflow);    
     }
-    // shave off leading 1s, 
-    // width guaranteed not to be 0 because of Bitpack_fitss
-    //value = leftshift(value, WSIZE - width);
-    //value = rightshift(value, WSIZE - width);
+    value = leftshift(value, WSIZE - width);
+    value = urightshift(value, WSIZE - width);
     return new_core(word, width, lsb, value);
 }
