@@ -7,13 +7,6 @@
 #include "color_space.h"
 #include "codeword.h"
 
-Array_T as;
-Array_T bs;
-Array_T cs;
-Array_T ds;
-Array_T pbs;
-Array_T prs;
-
 Pnm_ppm Pnm_cvrep(const Pnm_ppm);
 void block_update(Pnm_rgb_f *, unsigned, const Pnm_ppm, unsigned, unsigned);
 void block_values(Pnm_rgb_f *, unsigned, float *, float *, 
@@ -66,6 +59,8 @@ void block_values(Pnm_rgb_f *block, unsigned len, float *a, float *b,
                   float *c, float *d, float *pb, float *pr) {
     assert(block && len == 4);
     assert(a && b && c && d && pb && pr);
+    *pb = 0;
+    *pr = 0;
     float y[len];
     for (unsigned i = 0; i < len; ++i) {
         y[i] = block[i]->red;
@@ -81,8 +76,7 @@ void block_values(Pnm_rgb_f *block, unsigned len, float *a, float *b,
 }
 
 void blocks_to_words(const Pnm_ppm ppm, Array_T words) {
-    (void)words;
-    assert(ppm /*&& words*/);
+    assert(ppm && words);
     assert(ppm->height % 2 == 0 && ppm->width % 2 == 0);
     unsigned index = 0;
     unsigned width = ppm->width;
@@ -91,28 +85,15 @@ void blocks_to_words(const Pnm_ppm ppm, Array_T words) {
     a = b = c = d = avg_pb = avg_pr = 0.0f;
     unsigned blocksize = 4;
     Pnm_rgb_f block[blocksize];
-    /*codeword *elem = NULL;
-    codeword word = 0;*/
+    codeword *elem = NULL;
+    codeword word = 0;
     for (unsigned i = 0; i < height; i += 2) {
         for (unsigned j = 0; j < width; j += 2) {
             block_update(block, blocksize, ppm, j, i);
             block_values(block, blocksize, &a, &b, &c, &d, &avg_pb, &avg_pr);
-            float *bla = Array_get(as, index);
-            *bla = a; 
-            bla = Array_get(bs, index);
-            *bla = b;  
-            bla = Array_get(cs, index);
-            *bla = c;  
-            bla = Array_get(ds, index);
-            *bla = d;
-            bla = Array_get(pbs, index);
-            *bla = avg_pb;
-            bla = Array_get(prs, index);
-            *bla = avg_pr;
-            ++index;  
-            /*word = pack_word(a, b, c, d, avg_pb, avg_pr);
+            word = pack_word(a, b, c, d, avg_pb, avg_pr);
             elem = (codeword *)Array_get(words, index++);
-            *elem = word;*/
+            *elem = word;
         }
     }
 }
@@ -131,26 +112,12 @@ void compress(FILE *input) {
     Pnm_ppm img_cv = Pnm_cvrep(img_trim);
     Pnm_ppmfree(&img_trim);
     unsigned num_blocks = Pnm_num_blocks(img_cv);
-    /*Array_T words = Array_new(num_blocks, sizeof(codeword));
+    Array_T words = Array_new(num_blocks, sizeof(codeword));
     blocks_to_words(img_cv, words);
     Pnm_comp img_comp = Pnm_comp_new(img_cv->width, img_cv->height, words);
     Pnm_ppmfree(&img_cv);
     Pnm_comp_write(stdout, img_comp);
-    Pnm_comp_free(&img_comp);*/
-    
-    // ROUND TRIP TESTING
-    as = Array_new(num_blocks, sizeof(float));
-    bs = Array_new(num_blocks, sizeof(float));
-    cs = Array_new(num_blocks, sizeof(float));
-    ds = Array_new(num_blocks, sizeof(float));  
-    pbs = Array_new(num_blocks, sizeof(float));
-    prs = Array_new(num_blocks, sizeof(float));
-    blocks_to_words(img_cv, NULL);
-    words_to_blocks(img_cv, NULL);
-    Pnm_ppm img_rgb = Pnm_rgbrep(img_cv);
-    Pnm_ppmfree(&img_cv);
-    Pnm_ppmwrite(stdout, img_rgb);
-    Pnm_ppmfree(&img_rgb);
+    Pnm_comp_free(&img_comp);
 }
 
 /*******************************************DECOMPRESS***************************************/
@@ -175,7 +142,7 @@ Pnm_ppm Pnm_rgbrep(const Pnm_ppm ppm) {
     temp->denominator = ppm->denominator;
     temp->methods = ppm->methods;
     temp->pixels = temp->methods->new(temp->width, temp->height,
-		                      sizeof(struct Pnm_rgb_f));
+		                              sizeof(struct Pnm_rgb_f));
     // update float values so they represent r, g, b
     Pnm_rgb_f old_pixel = NULL;
     Pnm_rgb_f new_pixel = NULL;
@@ -220,10 +187,9 @@ void update_float_pixel(Pnm_ppm img, unsigned c, unsigned r,
 }
 
 void words_to_blocks(Pnm_ppm img, const Array_T words) {
-    (void)words;
-    assert(img /*&& words*/);
-    unsigned len = Array_length(/*words*/as);
-    //codeword *elem = NULL;
+    assert(img && words);
+    unsigned len = Array_length(words);
+    codeword *elem = NULL;
     float a, b, c, d, pb, pr;
     a = b = c = d = pb = pr = 0.0f;
     float y[4];
@@ -235,20 +201,8 @@ void words_to_blocks(Pnm_ppm img, const Array_T words) {
             row += 2;
             col = 0;
         }
-        /*elem = (codeword *)Array_get(words, i);
-        unblock_values(*elem, &a, &b, &c, &d, &pb, &pr);*/
-        float *bla = Array_get(as, i);
-        a = *bla; 
-        bla = Array_get(bs, i);
-        b = *bla;  
-        bla = Array_get(cs, i);
-        c = *bla;  
-        bla = Array_get(ds, i);
-        d = *bla;
-        bla = Array_get(pbs, i);
-        pb = *bla;
-        bla = Array_get(prs, i);
-        pr = *bla;
+        elem = (codeword *)Array_get(words, i);
+        unblock_values(*elem, &a, &b, &c, &d, &pb, &pr);
         y[0] = luma_tl(a, b, c, d);
         y[1] = luma_tr(a, b, c, d);
         y[2] = luma_bl(a, b, c, d);
