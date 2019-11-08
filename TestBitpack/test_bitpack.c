@@ -10,21 +10,31 @@ void bitprint(uint64_t n) {
 }
 
 int main() {
-    int64_t word = 0xC7;
-    bitprint(word);
-    int64_t new_word = Bitpack_newu(word, 3, 2, 3);
-    bitprint(new_word);
-    printf("%lud\n", new_word);
-    int64_t extracted = Bitpack_getu(new_word, 3, 2);
-    bitprint(extracted);
-    printf("%lud\n", extracted);
-    int64_t new_word2 = Bitpack_news(word, 3, 2, 3);
-    int64_t extracted2 = Bitpack_gets(new_word2, 3, 2);
-    bitprint(new_word2);
-    printf("%lud\n", new_word2);
-    bitprint(extracted2);
-    printf("%lud\n", extracted2);
-    assert(extracted == extracted2);
-    assert(new_word == new_word2);
+    /*uint64_t uword = 0xDC;
+    uint64_t ures = Bitpack_getu(uword, 3, 4);
+    bitprint(uword);
+    printf("%lu\n", uword);
+    bitprint(ures);
+    printf("%lu\n", ures);*/
+
+    int64_t sword = 0xB8;
+    int64_t sres = Bitpack_gets(sword, 4, 2);
+    /*bitprint(sword);
+    printf("%ld\n", sword);
+    bitprint(sres);
+    printf("%ld\n", sres);*/
+
+    uint64_t uval = 0x2AA;
+    bitprint(uval);
+    printf("%lu\n", uval); 
+    uint64_t unword = Bitpack_newu(sres, 10, 17, uval);
+    bitprint(unword);
+    printf("%lu\n", unword);
+    int64_t sval = -342;
+    bitprint(sval);
+    printf("%ld\n", sval);
+    uint64_t snword = Bitpack_news(sres, 10, 17, sval);
+    bitprint(snword);
+    printf("%lu\n", snword);
     return 0;
 }

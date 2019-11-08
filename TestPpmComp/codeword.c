@@ -1,5 +1,4 @@
 #include <math.h>
-#include <stdbool.h>
 #include "assert.h"
 #include "bitpack.h"
 #include "arith411.h"
@@ -33,13 +32,13 @@
 static int encode_bcd(float f, int max_int, float max_float) {
     // clamp f to be in the range of [-max_float, +max_float]
     if (f > max_float) {
-        f = max_float;
+        return max_float;
     }
     if (f < -max_float) {
-        f = -max_float;
+        return -max_float;
     }
     // multiply f by scale factor
-    return round(f * ((float)(max_int / max_float)));  
+    return round(f * ((float)max_int / max_float));  
 }
 
 // encode a
@@ -49,10 +48,10 @@ static unsigned encode_a(float a) {
 
 // pack 4 coded values into a codeword
 codeword pack_word(float a, float b, float c, 
-		   float d, float pb, float pr) {
+		           float d, float pb, float pr) {
     unsigned code_a = encode_a(a);
     int code_b = encode_bcd(b, MAX_B_I, MAX_B_F);
-    int code_c = encode_bcd(c, MAX_C_I, MAX_B_F);
+    int code_c = encode_bcd(c, MAX_C_I, MAX_C_F);
     int code_d = encode_bcd(d, MAX_D_I, MAX_D_F);
     unsigned idx_pb = Arith_index_of_chroma(pb);
     unsigned idx_pr = Arith_index_of_chroma(pr);
@@ -116,6 +115,6 @@ float unpack_pb(codeword word) {
 // unpack pr from a codeword
 float unpack_pr(codeword word) {
     uint64_t idx_pr = Bitpack_getu(word, WIDTH_IDX, LSB_PR);
-    float pr = Arith_chroma_of_index(idx_pr); 
+    float pr = Arith_chroma_of_index(idx_pr);
     return pr;
 }

@@ -7,7 +7,18 @@
 #include "color_space.h"
 #include "codeword.h"
 
-#include <math.h> 
+Pnm_ppm Pnm_cvrep(const Pnm_ppm);
+void block_update(Pnm_rgb_f *, unsigned, const Pnm_ppm, unsigned, unsigned);
+void block_values(Pnm_rgb_f *, unsigned, float *, float *, 
+                  float *, float *, float *, float *);
+void blocks_to_words(const Pnm_ppm, Array_T);
+void compress(FILE *);
+float clamp_rgb(float);
+Pnm_ppm Pnm_rgbrep(const Pnm_ppm);
+void unblock_values(codeword, float *, float *, float *, float *, float *, float *);
+void update_float_pixel(Pnm_ppm, unsigned, unsigned, float, float, float);
+void words_to_blocks(Pnm_ppm, const Array_T);
+void decompress(FILE *);
 
 /*******************************************COMPRESS*****************************************/
 
@@ -48,6 +59,8 @@ void block_values(Pnm_rgb_f *block, unsigned len, float *a, float *b,
                   float *c, float *d, float *pb, float *pr) {
     assert(block && len == 4);
     assert(a && b && c && d && pb && pr);
+    *pb = 0;
+    *pr = 0;
     float y[len];
     for (unsigned i = 0; i < len; ++i) {
         y[i] = block[i]->red;
@@ -129,7 +142,7 @@ Pnm_ppm Pnm_rgbrep(const Pnm_ppm ppm) {
     temp->denominator = ppm->denominator;
     temp->methods = ppm->methods;
     temp->pixels = temp->methods->new(temp->width, temp->height,
-		                      sizeof(struct Pnm_rgb_f));
+		                              sizeof(struct Pnm_rgb_f));
     // update float values so they represent r, g, b
     Pnm_rgb_f old_pixel = NULL;
     Pnm_rgb_f new_pixel = NULL;
@@ -164,7 +177,7 @@ void unblock_values(codeword word, float *a, float *b, float *c,
 }
 
 void update_float_pixel(Pnm_ppm img, unsigned c, unsigned r, 
-                  float y, float pb, float pr) {
+                        float y, float pb, float pr) {
     assert(img);
     Pnm_rgb_f pixel = NULL;
     pixel = (Pnm_rgb_f)img->methods->at(img->pixels, c, r);
@@ -202,10 +215,20 @@ void words_to_blocks(Pnm_ppm img, const Array_T words) {
     }
 }
 
+/*void bitprint(uint64_t n) {
+    for (uint64_t i = (uint64_t)1 << 63; i > 0; i /= 2) {
+        (n & i) ? printf("1") : printf("0");
+    }
+    printf("\n");
+}*/
+
 // reads a compressed image and writes PPM
 void decompress(FILE *input) {
     assert(input);
     Pnm_comp img_comp = Pnm_comp_read(input);
+    /*for (int i = 0; i < Array_length(img_comp->words); ++i) {
+        bitprint(*(codeword *)Array_get(img_comp->words, i));
+    }*/
     A2Methods_T methods = array2_methods_plain;
     assert(methods);
     Pnm_ppm img_decomp;
