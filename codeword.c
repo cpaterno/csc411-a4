@@ -28,7 +28,7 @@
 
 /*----------------------------------------ENCODE--------------------------------------------*/
 
-// encode b 
+// encode bcd
 static int encode_bcd(float f, int max_int, float max_float) {
     // clamp f to be in the range of [-max_float, +max_float]
     if (f > max_float) {
@@ -49,13 +49,15 @@ static unsigned encode_a(float a) {
 // pack 4 coded values into a codeword
 codeword pack_word(float a, float b, float c, 
 		           float d, float pb, float pr) {
+    // encode values
     unsigned code_a = encode_a(a);
     int code_b = encode_bcd(b, MAX_B_I, MAX_B_F);
     int code_c = encode_bcd(c, MAX_C_I, MAX_C_F);
     int code_d = encode_bcd(d, MAX_D_I, MAX_D_F);
     unsigned idx_pb = Arith_index_of_chroma(pb);
     unsigned idx_pr = Arith_index_of_chroma(pr);
-    codeword word = 0;    
+    codeword word = 0;
+    // pack each value   
     word = Bitpack_newu(word, WIDTH_A, LSB_A, code_a);
     word = Bitpack_news(word, WIDTH_B, LSB_B, code_b);
     word = Bitpack_news(word, WIDTH_C, LSB_C, code_c);
@@ -79,6 +81,7 @@ float unpack_a(codeword word) {
     return a;
 }
 
+// decode bcd
 static float decode_bcd(int code, int max_int, float max_float) {
     // multiply code by inverse scale factor
     return code * (max_float / (float)max_int);  

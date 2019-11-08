@@ -4,6 +4,7 @@
 #include "codeword.h"
 #include "ppm_c.h"
 
+// Unfortunately I am on a little endian machine, so this is necessary
 void endian_switch(unsigned char *buf, unsigned len) {
     assert(buf);
     char temp = 0;
@@ -36,6 +37,11 @@ Pnm_comp Pnm_comp_read(FILE *fp) {
     assert(read == 2);
     int c = getc(fp);
     assert(c == '\n');
+    // read in bytes, allocated them to a single codeword,
+    // and plop into a codewords array
+    // grow Array_T like a C++ vector, that way we can 
+    // stil read in the correct ammount assuming the width
+    // and height provided by the file were wrong
     Array_T words = Array_new(0, sizeof(codeword));
     int size = Array_size(words);
     int len = Array_length(words);
@@ -45,8 +51,10 @@ Pnm_comp Pnm_comp_read(FILE *fp) {
     int j = 0;
     while (!feof(fp)) {
         buf[j++] = getc(fp);
+        // buffer is full
         if (j == size) {
             j = 0;
+            // Array needs to be resized
             if (i == len) {
                 if (i != 0) {
                     len *= 2;
@@ -61,6 +69,7 @@ Pnm_comp Pnm_comp_read(FILE *fp) {
             memcpy(element, buf, size);
         }
     }
+    // Remove extra space
     Array_resize(words, i);
     return Pnm_comp_new(width, height, words);
 }
