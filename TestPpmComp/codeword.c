@@ -32,10 +32,10 @@
 static int encode_bcd(float f, int max_int, float max_float) {
     // clamp f to be in the range of [-max_float, +max_float]
     if (f > max_float) {
-        f = max_float;
+        return max_float;
     }
     if (f < -max_float) {
-        f = -max_float;
+        return -max_float;
     }
     // multiply f by scale factor
     return round(f * ((float)max_int / max_float));  
