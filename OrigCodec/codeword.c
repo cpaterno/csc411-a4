@@ -4,22 +4,22 @@
 #include "arith411.h"
 #include "codeword.h"
 
-#define WIDTH_A 6
-#define WIDTH_B 6
+#define WIDTH_A 9
+#define WIDTH_B 5
 #define WIDTH_C WIDTH_B
 #define WIDTH_D WIDTH_B
 #define WIDTH_IDX 4
 
-#define LSB_A 26
-#define LSB_B 20
-#define LSB_C 14
+#define LSB_A 23
+#define LSB_B 18
+#define LSB_C 13
 #define LSB_D 8
 #define LSB_PB 4
 #define LSB_PR 0
 
-#define MAX_A 63
+#define MAX_A 511
 
-#define MAX_B_I 31
+#define MAX_B_I 15
 #define MAX_B_F 0.3f
 #define MAX_C_I MAX_B_I
 #define MAX_C_F MAX_B_F
